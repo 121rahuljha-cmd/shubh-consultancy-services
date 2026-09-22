@@ -1,0 +1,165 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  /* Manrope is the display/heading face. It is mapped onto the `serif` slot so
+     the `font-serif` utility resolves to it instead of the browser default. */
+  --font-serif: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+
+  --color-navy: var(--navy);
+  --color-navy-deep: var(--navy-deep);
+  --color-navy-soft: var(--navy-soft);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-tint: var(--brand-tint);
+  --color-surface: var(--surface);
+
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  color-scheme: light;
+
+  /* Brand palette: deep navy + bright cyan-blue + neutrals */
+  --navy-deep: oklch(0.24 0.075 259);
+  --navy: oklch(0.32 0.095 258);
+  --navy-soft: oklch(0.44 0.095 257);
+  --brand: oklch(0.62 0.196 257);
+  --brand-hover: oklch(0.55 0.19 257);
+  --brand-tint: oklch(0.96 0.02 254);
+  --surface: oklch(0.975 0.008 254);
+
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.24 0.035 258);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.24 0.035 258);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.24 0.035 258);
+  --primary: oklch(0.32 0.095 258);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.96 0.012 254);
+  --secondary-foreground: oklch(0.32 0.095 258);
+  --muted: oklch(0.966 0.01 254);
+  --muted-foreground: oklch(0.52 0.025 257);
+  --accent: oklch(0.62 0.196 257);
+  --accent-foreground: oklch(0.99 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.912 0.014 254);
+  --input: oklch(0.912 0.014 254);
+  --ring: oklch(0.62 0.196 257);
+  --chart-1: oklch(0.62 0.196 257);
+  --chart-2: oklch(0.32 0.095 258);
+  --chart-3: oklch(0.44 0.095 257);
+  --chart-4: oklch(0.72 0.13 250);
+  --chart-5: oklch(0.85 0.06 252);
+  --radius: 0.5rem;
+  --sidebar: oklch(0.975 0.008 254);
+  --sidebar-foreground: oklch(0.24 0.035 258);
+  --sidebar-primary: oklch(0.32 0.095 258);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.96 0.012 254);
+  --sidebar-accent-foreground: oklch(0.32 0.095 258);
+  --sidebar-border: oklch(0.912 0.014 254);
+  --sidebar-ring: oklch(0.62 0.196 257);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    letter-spacing: -0.02em;
+  }
+}
+
+@utility container-page {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 80rem;
+  padding-inline: 1rem;
+  @media (width >= 40rem) {
+    padding-inline: 1.5rem;
+  }
+  @media (width >= 64rem) {
+    padding-inline: 2rem;
+  }
+}
+
+/* Eyebrow label used above section headings */
+@utility eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee-x 40s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+.content-plan-shell main > div > section.mb-8 > div:first-child {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "generatedAt": "2026-08-24T11:23:21.652Z",
+  "desktop": {
+    "width": 1440,
+    "fullPage": {
+      "width": 1502,
+      "height": 5809,
+      "diffPixels": 207684,
+      "diffRatio": 0.023803
+    },
+    "sections": {
+      "statistics": {
+        "width": 1440,
+        "height": 167,
+        "diffPixels": 2155,
+        "diffRatio": 0.008961
+      },
+      "services": {
+        "width": 1440,
+        "height": 1404,
+        "diffPixels": 32129,
+        "diffRatio": 0.015892
+      },
+      "how_it_works": {
+        "width": 1440,
+        "height": 687,
+        "diffPixels": 38240,
+        "diffRatio": 0.038654
+      },
+      "why_choose_us": {
+        "width": 1440,
+        "height": 901,
+        "diffPixels": 52463,
+        "diffRatio": 0.040436
+      },
+      "testimonials": {
+        "width": 1440,
+        "height": 716,
+        "diffPixels": 39250,
+        "diffRatio": 0.038068
+      },
+      "cta": {
+        "width": 1440,
+        "height": 429,
+        "diffPixels": 16032,
+        "diffRatio": 0.025952
+      },
+      "footer": {
+        "width": 308,
+        "height": 62,
+        "diffPixels": 1574,
+        "diffRatio": 0.082426
+      }
+    }
+  },
+  "responsive": [
+    {
+      "width": 360,
+      "diff": {
+        "width": 360,
+        "height": 10483,
+        "diffPixels": 225356,
+        "diffRatio": 0.059715
+      }
+    },
+    {
+      "width": 375,
+      "diff": {
+        "width": 375,
+        "height": 10417,
+        "diffPixels": 227938,
+        "diffRatio": 0.05835
+      }
+    },
+    {
+      "width": 390,
+      "diff": {
+        "width": 390,
+        "height": 10334,
+        "diffPixels": 228441,
+        "diffRatio": 0.056681
+      }
+    },
+    {
+      "width": 414,
+      "diff": {
+        "width": 414,
+        "height": 10179,
+        "diffPixels": 220122,
+        "diffRatio": 0.052235
+      }
+    },
+    {
+      "width": 768,
+      "diff": {
+        "width": 768,
+        "height": 7501,
+        "diffPixels": 337960,
+        "diffRatio": 0.058666
+      }
+    },
+    {
+      "width": 1024,
+      "diff": {
+        "width": 1317,
+        "height": 6045,
+        "diffPixels": 215924,
+        "diffRatio": 0.027122
+      }
+    },
+    {
+      "width": 1280,
+      "diff": {
+        "width": 1422,
+        "height": 5809,
+        "diffPixels": 206401,
+        "diffRatio": 0.024987
+      }
+    },
+    {
+      "width": 1440,
+      "diff": {
+        "width": 1502,
+        "height": 5809,
+        "diffPixels": 207684,
+        "diffRatio": 0.023803
+      }
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { states } from '@/lib/locations'
+
+export const metadata: Metadata = { title: 'Indian States and Union Territories', description: 'Browse structured state and union territory data for future location-specific service pages.' }
+export default function StatesPage() { return <main><section className="bg-primary"><div className="mx-auto max-w-6xl px-4 py-14 md:px-6"><nav className="text-sm text-primary-foreground/70"><Link href="/">Home</Link> / States</nav><h1 className="mt-6 font-serif text-4xl font-bold text-primary-foreground">States and union territories</h1><p className="mt-4 max-w-2xl text-lg text-primary-foreground/75">Structured location data for future editorial pages. A location record does not automatically create or publish an SEO page.</p></div></section><div className="mx-auto grid max-w-6xl gap-4 px-4 py-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">{states.map((state) => <article key={state.id} className="rounded-xl border border-border bg-card p-4"><h2 className="font-serif text-lg font-bold text-navy">{state.name}</h2><p className="mt-1 text-xs uppercase text-muted-foreground">{state.code} · {state.status}</p></article>)}</div></main> }

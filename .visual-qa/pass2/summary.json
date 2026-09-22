@@ -1,0 +1,862 @@
+{
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "fullPage": {
+    "width": 1502,
+    "height": 5809,
+    "diffPixels": 567704,
+    "diffRatio": 0.065065,
+    "originalA": {
+      "width": 1502,
+      "height": 5809
+    },
+    "originalB": {
+      "width": 1502,
+      "height": 5712
+    }
+  },
+  "sections": {
+    "header": {
+      "reference": {
+        "found": true,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 109
+        },
+        "text": "S-20/1, Ground Floor, Shalimar Garden Extension 1, Ghaziabad, Uttar Pradesh 201005marketing.shubhcs@gmail.com+91-7011340730SCSShubh ConsultancyServicesHomeStartupRegistrationsTrademarkGSTIncome TaxCom",
+        "styles": {
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "0px",
+          "paddingBottom": "0px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "local": {
+        "found": true,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 109
+        },
+        "text": "S-20/1, Ground Floor, Shalimar Garden Extension 1, Ghaziabad, Uttar Pradesh 201005marketing.shubhcs@gmail.com+91-7011340730SCSShubh ConsultancyServicesHomeStartupRegistrationsTrademarkGSTIncome TaxCom",
+        "styles": {
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "0px",
+          "paddingBottom": "0px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "imageDiff": {
+        "width": 1440,
+        "height": 109,
+        "diffPixels": 0,
+        "diffRatio": 0,
+        "originalA": {
+          "width": 1440,
+          "height": 109
+        },
+        "originalB": {
+          "width": 1440,
+          "height": 109
+        }
+      }
+    },
+    "hero": {
+      "reference": {
+        "found": true,
+        "rect": {
+          "x": 0,
+          "y": 109,
+          "width": 1440,
+          "height": 877.75
+        },
+        "text": "Trusted since 2015 · GhaziabadLicensing, tax and compliance handled properly — so you can get back to the business.From FSSAI licences and GST registration to company incorporation, trademarks, ROC fi",
+        "styles": {
+          "backgroundColor": "lab(11.1773 3.45592 -26.1537)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "0px",
+          "paddingBottom": "0px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "local": {
+        "found": true,
+        "rect": {
+          "x": 0,
+          "y": 109,
+          "width": 1440,
+          "height": 877.75
+        },
+        "text": "Trusted since 2015 · GhaziabadLicensing, tax and compliance handled properly — so you can get back to the business.From FSSAI licences and GST registration to company incorporation, trademarks, ROC fi",
+        "styles": {
+          "backgroundColor": "lab(11.1773 3.45594 -26.1538)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "0px",
+          "paddingBottom": "0px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "imageDiff": {
+        "width": 1440,
+        "height": 878,
+        "diffPixels": 2673,
+        "diffRatio": 0.002114,
+        "originalA": {
+          "width": 1440,
+          "height": 878
+        },
+        "originalB": {
+          "width": 1440,
+          "height": 878
+        }
+      }
+    },
+    "service_search": {
+      "reference": {
+        "found": true,
+        "rect": {
+          "x": 112,
+          "y": 688.75,
+          "width": 621.59375,
+          "height": 144
+        },
+        "text": "Explore ServicesBrowsePopularFSSAI LicenceGST RegistrationITR FilingTrademarkPvt Ltd Company",
+        "styles": {
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "0px",
+          "paddingBottom": "0px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "auto",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "local": {
+        "found": true,
+        "rect": {
+          "x": 112,
+          "y": 688.75,
+          "width": 621.59375,
+          "height": 144
+        },
+        "text": "Explore ServicesBrowsePopularFSSAI LicenceGST RegistrationITR FilingTrademarkPvt Ltd Company",
+        "styles": {
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "0px",
+          "paddingBottom": "0px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "auto",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "imageDiff": {
+        "width": 622,
+        "height": 145,
+        "diffPixels": 0,
+        "diffRatio": 0,
+        "originalA": {
+          "width": 622,
+          "height": 145
+        },
+        "originalB": {
+          "width": 622,
+          "height": 145
+        }
+      }
+    },
+    "popular_services": {
+      "reference": {
+        "found": true,
+        "rect": {
+          "x": 112,
+          "y": 764.75,
+          "width": 621.59375,
+          "height": 68
+        },
+        "text": "PopularFSSAI LicenceGST RegistrationITR FilingTrademarkPvt Ltd Company",
+        "styles": {
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "0px",
+          "paddingBottom": "0px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "16px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "flex",
+          "gap": "8px",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "center"
+        }
+      },
+      "local": {
+        "found": true,
+        "rect": {
+          "x": 112,
+          "y": 764.75,
+          "width": 621.59375,
+          "height": 68
+        },
+        "text": "PopularFSSAI LicenceGST RegistrationITR FilingTrademarkPvt Ltd Company",
+        "styles": {
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "0px",
+          "paddingBottom": "0px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "16px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "flex",
+          "gap": "8px",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "center"
+        }
+      },
+      "imageDiff": {
+        "width": 622,
+        "height": 69,
+        "diffPixels": 0,
+        "diffRatio": 0,
+        "originalA": {
+          "width": 622,
+          "height": 69
+        },
+        "originalB": {
+          "width": 622,
+          "height": 69
+        }
+      }
+    },
+    "trust_indicators": {
+      "reference": {
+        "found": true,
+        "rect": {
+          "x": 112,
+          "y": 856.75,
+          "width": 621.59375,
+          "height": 50
+        },
+        "text": "Filed by qualified professionalsTransparent timelines, no surprisesSingle point of contact throughout",
+        "styles": {
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "0px",
+          "paddingBottom": "0px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "flex",
+          "gap": "10px 24px",
+          "minHeight": "auto",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "local": {
+        "found": true,
+        "rect": {
+          "x": 112,
+          "y": 856.75,
+          "width": 621.59375,
+          "height": 50
+        },
+        "text": "Filed by qualified professionalsTransparent timelines, no surprisesSingle point of contact throughout",
+        "styles": {
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "0px",
+          "paddingBottom": "0px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "flex",
+          "gap": "10px 24px",
+          "minHeight": "auto",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "imageDiff": {
+        "width": 622,
+        "height": 51,
+        "diffPixels": 0,
+        "diffRatio": 0,
+        "originalA": {
+          "width": 622,
+          "height": 51
+        },
+        "originalB": {
+          "width": 622,
+          "height": 51
+        }
+      }
+    },
+    "statistics": {
+      "reference": {
+        "found": true,
+        "rect": {
+          "x": 0,
+          "y": 986.75,
+          "width": 1440,
+          "height": 165.75
+        },
+        "text": "2,500+Clients served across India15+Years of combined experience4.6Average client rating20+Services under one roof",
+        "styles": {
+          "backgroundColor": "lab(100 0 0)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "48px",
+          "paddingBottom": "48px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "local": {
+        "found": true,
+        "rect": {
+          "x": 0,
+          "y": 986.75,
+          "width": 1440,
+          "height": 163.75
+        },
+        "text": "2,500+Clients served across India15+Years of combined experience4.6Average client rating20+Services under one roof",
+        "styles": {
+          "backgroundColor": "lab(100 0 0)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "48px",
+          "paddingBottom": "48px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "imageDiff": {
+        "width": 1440,
+        "height": 167,
+        "diffPixels": 13292,
+        "diffRatio": 0.055273,
+        "originalA": {
+          "width": 1440,
+          "height": 167
+        },
+        "originalB": {
+          "width": 1440,
+          "height": 165
+        }
+      }
+    },
+    "services": {
+      "reference": {
+        "found": true,
+        "rect": {
+          "x": 0,
+          "y": 1152.5,
+          "width": 1440,
+          "height": 1403.5
+        },
+        "text": "Our ServicesEverything a growing Indian business has to file, in one placeSeven practice areas, one team. Pick the service you need and see exactly what it costs, what documents are required and how l",
+        "styles": {
+          "backgroundColor": "lab(97.0859 -0.697523 -2.92254)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "96px",
+          "paddingBottom": "96px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "local": {
+        "found": true,
+        "rect": {
+          "x": 0,
+          "y": 1150.5,
+          "width": 1440,
+          "height": 1383.5
+        },
+        "text": "Our ServicesEverything a growing Indian business has to file, in one placeSeven practice areas, one team. Pick the service you need and see exactly what it costs, what documents are required and how l",
+        "styles": {
+          "backgroundColor": "lab(97.0859 -0.697523 -2.92255)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "96px",
+          "paddingBottom": "96px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "imageDiff": {
+        "width": 1440,
+        "height": 1404,
+        "diffPixels": 88535,
+        "diffRatio": 0.043791,
+        "originalA": {
+          "width": 1440,
+          "height": 1404
+        },
+        "originalB": {
+          "width": 1440,
+          "height": 1384
+        }
+      }
+    },
+    "how_it_works": {
+      "reference": {
+        "found": true,
+        "rect": {
+          "x": 0,
+          "y": 2556,
+          "width": 1440,
+          "height": 682.5
+        },
+        "text": "How it worksFour steps from enquiry to certificateWe keep the process transparent so you always know which stage your application is at and what happens next.1Share your requirementCall or WhatsApp us",
+        "styles": {
+          "backgroundColor": "lab(95.3381 -1.03107 -4.37531)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "96px",
+          "paddingBottom": "96px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "local": {
+        "found": true,
+        "rect": {
+          "x": 0,
+          "y": 2534,
+          "width": 1440,
+          "height": 646.75
+        },
+        "text": "How it worksFour steps from enquiry to certificateWe keep the process transparent so you always know which stage your application is at and what happens next.1Share your requirementCall or WhatsApp us",
+        "styles": {
+          "backgroundColor": "lab(95.3381 -1.03101 -4.37533)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "96px",
+          "paddingBottom": "96px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "imageDiff": {
+        "width": 1440,
+        "height": 683,
+        "diffPixels": 99452,
+        "diffRatio": 0.101118,
+        "originalA": {
+          "width": 1440,
+          "height": 683
+        },
+        "originalB": {
+          "width": 1440,
+          "height": 647
+        }
+      }
+    },
+    "why_choose_us": {
+      "reference": {
+        "found": true,
+        "rect": {
+          "x": 0,
+          "y": 3238.5,
+          "width": 1440,
+          "height": 900.5
+        },
+        "text": "Why Shubh ConsultancyCompliance handled properly, the first timeBusinesses across Delhi NCR rely on us because we treat filings as legal work that has to be correct, not paperwork to rush through.Qual",
+        "styles": {
+          "backgroundColor": "lab(100 0 0)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "96px",
+          "paddingBottom": "96px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "local": {
+        "found": true,
+        "rect": {
+          "x": 0,
+          "y": 3180.75,
+          "width": 1440,
+          "height": 884.5
+        },
+        "text": "Why Shubh ConsultancyCompliance handled properly, the first timeBusinesses across Delhi NCR rely on us because we treat filings as legal work that has to be correct, not paperwork to rush through.Qual",
+        "styles": {
+          "backgroundColor": "lab(100 0 0)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "96px",
+          "paddingBottom": "96px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "imageDiff": {
+        "width": 1440,
+        "height": 901,
+        "diffPixels": 122496,
+        "diffRatio": 0.094414,
+        "originalA": {
+          "width": 1440,
+          "height": 901
+        },
+        "originalB": {
+          "width": 1440,
+          "height": 886
+        }
+      }
+    },
+    "testimonials": {
+      "reference": {
+        "found": true,
+        "rect": {
+          "x": 0,
+          "y": 4139,
+          "width": 1440,
+          "height": 715.5
+        },
+        "text": "Client feedbackTrusted by founders and business ownersRated 4.6 out of 5 by our clientsShubh Consultancy Services provided exceptional support in obtaining our FSSAI license and ensuring legal complia",
+        "styles": {
+          "backgroundColor": "lab(95.3381 -1.03107 -4.37531)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "96px",
+          "paddingBottom": "96px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "local": {
+        "found": true,
+        "rect": {
+          "x": 0,
+          "y": 4065.25,
+          "width": 1440,
+          "height": 676.75
+        },
+        "text": "Client feedbackTrusted by founders and business ownersRated 4.6 out of 5 by our clientsShubh Consultancy Services provided exceptional support in obtaining our FSSAI license and ensuring legal complia",
+        "styles": {
+          "backgroundColor": "lab(95.3381 -1.03101 -4.37533)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "96px",
+          "paddingBottom": "96px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "imageDiff": {
+        "width": 1440,
+        "height": 716,
+        "diffPixels": 92754,
+        "diffRatio": 0.089962,
+        "originalA": {
+          "width": 1440,
+          "height": 716
+        },
+        "originalB": {
+          "width": 1440,
+          "height": 677
+        }
+      }
+    },
+    "cta": {
+      "reference": {
+        "found": true,
+        "rect": {
+          "x": 0,
+          "y": 4854.5,
+          "width": 1440,
+          "height": 428
+        },
+        "text": "Not sure which registration applies to you?Talk to a qualified expert. We will tell you exactly what your business needs, what it costs, and how long it takes — before you commit to anything.Call +91-",
+        "styles": {
+          "backgroundColor": "lab(20.3408 3.2822 -33.0505)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "80px",
+          "paddingBottom": "80px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "local": {
+        "found": true,
+        "rect": {
+          "x": 0,
+          "y": 4742,
+          "width": 1440,
+          "height": 444
+        },
+        "text": "Not sure which registration applies to you?Talk to a qualified expert. We will tell you exactly what your business needs, what it costs, and how long it takes — before you commit to anything.Call +91-",
+        "styles": {
+          "backgroundColor": "lab(20.3408 3.28219 -33.0505)",
+          "color": "lab(11.6606 -0.697382 -12.441)",
+          "paddingTop": "80px",
+          "paddingBottom": "80px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "imageDiff": {
+        "width": 1440,
+        "height": 444,
+        "diffPixels": 51107,
+        "diffRatio": 0.079935,
+        "originalA": {
+          "width": 1440,
+          "height": 429
+        },
+        "originalB": {
+          "width": 1440,
+          "height": 444
+        }
+      }
+    },
+    "footer": {
+      "reference": {
+        "found": true,
+        "rect": {
+          "x": 0,
+          "y": 5282.5,
+          "width": 1440,
+          "height": 526.25
+        },
+        "text": "SCSShubh Consultancy ServicesWe offer expert accounting, licensing and digital marketing solutions to streamline operations, ensure compliance and fuel business growth.S-20/1, Ground Floor, Shalimar G",
+        "styles": {
+          "backgroundColor": "lab(11.1773 3.45592 -26.1537)",
+          "color": "oklab(0.999994 0.0000455677 0.0000200868 / 0.7)",
+          "paddingTop": "0px",
+          "paddingBottom": "0px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "local": {
+        "found": true,
+        "rect": {
+          "x": 0,
+          "y": 5186,
+          "width": 1440,
+          "height": 526.25
+        },
+        "text": "SCSShubh Consultancy ServicesWe offer expert accounting, licensing and digital marketing solutions to streamline operations, ensure compliance and fuel business growth.S-20/1, Ground Floor, Shalimar G",
+        "styles": {
+          "backgroundColor": "lab(11.1773 3.45594 -26.1538)",
+          "color": "oklab(0.999994 0.0000455677 0.0000200868 / 0.7)",
+          "paddingTop": "0px",
+          "paddingBottom": "0px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
+          "marginTop": "0px",
+          "marginBottom": "0px",
+          "borderRadius": "0px",
+          "display": "block",
+          "gap": "normal",
+          "minHeight": "0px",
+          "fontSize": "16px",
+          "textAlign": "start",
+          "alignItems": "normal"
+        }
+      },
+      "imageDiff": {
+        "width": 1440,
+        "height": 527,
+        "diffPixels": 15699,
+        "diffRatio": 0.020687,
+        "originalA": {
+          "width": 1440,
+          "height": 527
+        },
+        "originalB": {
+          "width": 1440,
+          "height": 527
+        }
+      }
+    }
+  }
+}

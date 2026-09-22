@@ -1,0 +1,444 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CmsStatus {
+  DRAFT
+  PUBLISHED
+  UNPUBLISHED
+}
+
+enum AdminRole {
+  ADMIN
+  EDITOR
+  AUTHOR
+  SEO_MANAGER
+}
+
+enum RevisionChangeType {
+  CREATE
+  EDIT
+  AI_ACCEPT
+  PUBLISH
+  UNPUBLISH
+  RESTORE
+}
+
+enum AiJobStatus {
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  FOLLOW_UP
+  CONVERTED
+  CLOSED
+  SPAM
+  ARCHIVED
+}
+
+enum KnowledgeStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+model Service {
+  id          String        @id @default(cuid())
+  name        String
+  slug        String        @unique
+  category    String
+  categoryId  String?
+  description String        @default("")
+  icon        String        @default("")
+  displayOrder Int          @default(0)
+  visible     Boolean       @default(true)
+  status      CmsStatus     @default(DRAFT)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  pages       ServicePage[]
+  categoryRef ServiceCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@index([categoryId])
+  @@index([category, visible, status, displayOrder])
+}
+
+model ServiceCategory {
+  id           String    @id @default(cuid())
+  name         String
+  slug         String    @unique
+  displayOrder Int       @default(0)
+  visible      Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  services     Service[]
+
+  @@index([visible, displayOrder])
+}
+
+model Location {
+  id          String        @id @default(cuid())
+  country     String
+  state       String
+  city        String
+  district    String?
+  locality    String?
+  pincode     String?
+  slug        String        @unique
+  parentId    String?
+  status      CmsStatus     @default(DRAFT)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  pages       ServicePage[]
+  parent      Location?     @relation("LocationTree", fields: [parentId], references: [id], onDelete: Restrict)
+  children    Location[]    @relation("LocationTree")
+
+  @@index([parentId])
+  @@index([status])
+}
+
+model ServicePage {
+  id           String             @id @default(cuid())
+  serviceId    String
+  locationId   String?
+  content      Json
+  status       CmsStatus          @default(DRAFT)
+  version      Int                @default(1)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  publishedAt  DateTime?
+  service      Service            @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+  location     Location?          @relation(fields: [locationId], references: [id], onDelete: Restrict)
+  seoMetadata  SeoMetadata?
+  seoResearch  SeoResearch[]
+  contentBlueprint ContentBlueprint?
+  faqs         Faq[]
+  revisions    ContentRevision[]
+  aiJobs       AiGenerationJob[]
+  sections     CmsSection[]
+  internalLinksFrom InternalLink[] @relation("InternalLinkSource")
+  internalLinksTo InternalLink[] @relation("InternalLinkTarget")
+  contentPlans ContentPlan[]
+
+  @@unique([serviceId, locationId])
+  @@index([status])
+  @@index([serviceId])
+  @@index([locationId])
+  @@index([publishedAt])
+  @@index([updatedAt])
+}
+
+model CmsSection {
+  id          String      @id @default(cuid())
+  servicePageId String
+  sectionData Json
+  displayOrder Int       @default(0)
+  source      String      @default("manual")
+  status      CmsStatus   @default(DRAFT)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  servicePage ServicePage @relation(fields: [servicePageId], references: [id], onDelete: Cascade)
+
+  @@index([servicePageId, displayOrder])
+  @@index([status])
+}
+
+model InternalLink {
+  id            String      @id @default(cuid())
+  sourcePageId  String
+  targetPageId  String?
+  anchorText    String
+  targetUrl     String
+  status        CmsStatus   @default(DRAFT)
+  displayOrder  Int         @default(0)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  sourcePage    ServicePage @relation("InternalLinkSource", fields: [sourcePageId], references: [id], onDelete: Cascade)
+  targetPage    ServicePage? @relation("InternalLinkTarget", fields: [targetPageId], references: [id], onDelete: SetNull)
+
+  @@index([sourcePageId, status, displayOrder])
+  @@index([targetPageId])
+}
+
+model ContentPlan {
+  id            String      @id @default(cuid())
+  servicePageId String?
+  title         String
+  slug          String
+  pageType      String
+  serviceId     String?
+  stateId       String?
+  cityId        String?
+  status        CmsStatus   @default(DRAFT)
+  planData      Json
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  servicePage   ServicePage? @relation(fields: [servicePageId], references: [id], onDelete: SetNull)
+
+  @@index([status, updatedAt])
+  @@index([serviceId, stateId, cityId])
+  @@unique([slug, pageType, serviceId, stateId, cityId])
+}
+
+model BlogPost {
+  id          String       @id @default(cuid())
+  slug        String       @unique
+  title       String
+  content     Json
+  status      CmsStatus    @default(DRAFT)
+  publishedAt DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  revisions   BlogRevision[]
+
+  @@index([status, updatedAt])
+}
+
+model BlogRevision {
+  id         String     @id @default(cuid())
+  blogPostId String
+  version    Int
+  content    Json
+  changedBy  String
+  status     CmsStatus
+  createdAt  DateTime   @default(now())
+  blogPost   BlogPost   @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
+
+  @@unique([blogPostId, version])
+  @@index([blogPostId, createdAt])
+}
+
+model SeoMetadata {
+  id               String      @id @default(cuid())
+  servicePageId    String      @unique
+  title            String
+  description      String
+  canonical        String
+  robots           String      @default("index,follow")
+  ogTitle          String
+  ogDescription    String
+  primaryKeyword   String
+  servicePage      ServicePage @relation(fields: [servicePageId], references: [id], onDelete: Cascade)
+
+  @@index([canonical])
+  @@index([primaryKeyword])
+}
+
+model ContentBlueprint {
+  id             String      @id @default(cuid())
+  servicePageId  String      @unique
+  blueprintData  Json
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  servicePage    ServicePage @relation(fields: [servicePageId], references: [id], onDelete: Cascade)
+}
+
+model Faq {
+  id             String      @id @default(cuid())
+  servicePageId  String
+  question       String
+  answer         String
+  sortOrder      Int         @default(0)
+  enabled        Boolean     @default(true)
+  servicePage    ServicePage @relation(fields: [servicePageId], references: [id], onDelete: Cascade)
+
+  @@index([servicePageId, enabled, sortOrder])
+}
+
+model SeoResearch {
+  id             String      @id @default(cuid())
+  servicePageId  String
+  researchData   Json
+  researchMode   String
+  researchedAt   DateTime
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  servicePage    ServicePage @relation(fields: [servicePageId], references: [id], onDelete: Cascade)
+
+  @@index([servicePageId, researchedAt])
+}
+
+model ContentRevision {
+  id             String             @id @default(cuid())
+  servicePageId  String
+  version        Int
+  content        Json
+  changedBy      String
+  changeType     RevisionChangeType
+  status         CmsStatus
+  createdAt      DateTime           @default(now())
+  servicePage    ServicePage        @relation(fields: [servicePageId], references: [id], onDelete: Cascade)
+
+  @@unique([servicePageId, version])
+  @@index([servicePageId, createdAt])
+}
+
+model MediaAsset {
+  id          String   @id @default(cuid())
+  filename    String
+  url         String
+  alt         String
+  title       String
+  width       Int?
+  height      Int?
+  mimeType    String
+  storageKey  String?
+  fileSize    Int?
+  archived    Boolean  @default(false)
+  metadata    Json?
+  createdAt   DateTime @default(now())
+}
+
+model AiGenerationJob {
+  id             String       @id @default(cuid())
+  servicePageId  String
+  action         String
+  status         AiJobStatus  @default(QUEUED)
+  attempts       Int          @default(0)
+  maxAttempts    Int          @default(3)
+  errorMessage   String?
+  inputHash      String
+  tokenCount     Int?
+  estimatedCost  Decimal?     @db.Decimal(12, 6)
+  startedAt      DateTime?
+  completedAt    DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  servicePage    ServicePage  @relation(fields: [servicePageId], references: [id], onDelete: Cascade)
+
+  @@index([status, createdAt])
+  @@index([servicePageId, status])
+  @@index([inputHash])
+}
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  username     String    @unique
+  passwordHash String
+  role         AdminRole @default(ADMIN)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Lead {
+  id              String     @id @default(cuid())
+  name            String
+  mobile          String
+  whatsapp        String?
+  email           String?
+  businessName    String?
+  businessType    String?
+  service         String?
+  category        String?
+  state           String?
+  city            String?
+  message         String?
+  landingPage     String?
+  source          String?
+  medium          String?
+  campaign        String?
+  status          LeadStatus @default(NEW)
+  assignedTo      String?
+  followUpAt      DateTime?
+  notes           String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@index([status, updatedAt])
+  @@index([mobile])
+  @@index([email])
+  @@index([service, createdAt])
+}
+
+model ContactForm {
+  id          String            @id @default(cuid())
+  name        String
+  slug        String            @unique
+  description String            @default("")
+  fields      Json
+  active      Boolean           @default(true)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  submissions FormSubmission[]
+}
+
+model FormSubmission {
+  id          String      @id @default(cuid())
+  formId      String?
+  payload     Json
+  landingPage String?
+  pageTitle   String?
+  service     String?
+  source      String?
+  medium      String?
+  campaign    String?
+  createdAt   DateTime    @default(now())
+  form        ContactForm? @relation(fields: [formId], references: [id], onDelete: SetNull)
+
+  @@index([formId, createdAt])
+  @@index([createdAt])
+}
+
+model RedirectRule {
+  id          String   @id @default(cuid())
+  oldPath     String   @unique
+  newPath     String
+  statusCode  Int      @default(301)
+  active      Boolean  @default(true)
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([active, oldPath])
+}
+
+model GlobalSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId, createdAt])
+  @@index([userId, createdAt])
+}
+
+model KnowledgeRecord {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  fact        String
+  source      String
+  sourceUrl   String?
+  category    String
+  content     String   @default("")
+  priority    Int      @default(0)
+  tags        Json?
+  status      KnowledgeStatus @default(DRAFT)
+  effectiveAt DateTime?
+  reviewAt    DateTime?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category, status, reviewAt])
+}

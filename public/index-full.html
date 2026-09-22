@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shubh Consultancy Services | FSSAI, GST, Company Registration, Trademark, ITR Filing</title>
+    <meta name="description" content="Shubh Consultancy Services provides complete business compliance solutions including company registration, FSSAI licensing, GST, ITR filing, trademark registration and ROC compliance for Indian businesses.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy-deep: #001a33;
+            --navy: #003d66;
+            --navy-light: #0d5a7a;
+            --brand: #1e9fd8;
+            --brand-hover: #1787c2;
+            --brand-light: #e8f7ff;
+            --surface: #f8fafb;
+            --text-dark: #1a2332;
+            --text-muted: #667085;
+            --border: #e5e7eb;
+            --white: #ffffff;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--white);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--navy);
+            text-decoration: none;
+        }
+
+        .logo-box {
+            width: 40px;
+            height: 40px;
+            background: var(--navy);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 800;
+            font-size: 14px;
+        }
+
+        nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        nav a:hover {
+            background: var(--surface);
+            color: var(--brand);
+        }
+
+        .header-cta {
+            display: flex;
+            gap: 12px;
+        }
+
+        .header-phone {
+            background: var(--brand);
+            color: var(--white);
+            padding: 10px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .header-phone:hover {
+            background: var(--brand-hover);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 100%);
+            color: var(--white);
+            padding: 60px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: rgba(30, 159, 216, 0.1);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero .container {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 40px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content span {
+            display: inline-block;
+            background: rgba(30, 159, 216, 0.2);
+            border: 1px solid rgba(30, 159, 216, 0.4);
+            color: #a0e7ff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 12px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--brand);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--brand-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--white);
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .hero-image {
+            background: rgba(30, 159, 216, 0.1);
+            border-radius: 12px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+        }
+
+        /* Assurances */
+        .assurances {
+            background: var(--white);
+            padding: 30px 20px;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .assurances .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            text-align: center;
+        }
+
+        .assurance-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .assurance-item strong {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 60px 20px;
+            background: var(--surface);
+        }
+
+        .stats .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--brand);
+            margin-bottom: 8px;
+        }
+
+        .stat-item p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Services Section */
+        .services {
+            padding: 80px 20px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 800;
+            color: var(--navy-deep);
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            font-size: 16px;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .service-categories {
+            display: flex;
+            gap: 0;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 40px;
+        }
+
+        .category-tab {
+            padding: 16px 24px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .category-tab:hover,
+        .category-tab.active {
+            color: var(--brand);
+            border-bottom-color: var(--brand);
+        }
+
+        .service-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .service-link {
+            padding: 20px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .service-link:hover {
+            border-color: var(--brand);
+            background: var(--brand-light);
+            color: var(--brand);
+        }
+
+        .service-link::after {
+            content: '→';
+            font-weight: 700;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 80px 20px;
+            background: var(--surface);
+        }
+
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 30px;
+        }
+
+        .process-step {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: var(--brand);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .process-step h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--navy-deep);
+            margin-bottom: 12px;
+        }
+
+        .process-step p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Why Choose Us */
+        .why-choose {
+            padding: 80px 20px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .feature {
+            display: flex;
+            gap: 20px;
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--brand-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .feature h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--navy-deep);
+            margin-bottom: 8px;
+        }
+
+        .feature p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 80px 20px;
+            background: var(--surface);
+        }
+
+        .testimonials .section-header h2::before {
+            content: '⭐ 4.6 rating | ';
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .testimonial-quote {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            color: var(--navy-deep);
+            font-size: 14px;
+        }
+
+        .testimonial-title {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 100%);
+            color: var(--white);
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: 16px;
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0.95;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-button {
+            background: var(--brand);
+            color: var(--white);
+            padding: 12px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .cta-button:hover {
+            background: var(--brand-hover);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--navy-deep);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 60px 20px 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h3 {
+            color: var(--white);
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-section a {
+            display: block;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 13px;
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: var(--brand);
+        }
+
+        .footer-section p {
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Floating Contact */
+        .floating-contact {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .floating-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            text-decoration: none;
+            font-size: 26px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .whatsapp-btn {
+            background: #25d366;
+        }
+
+        .whatsapp-btn:hover {
+            background: #1ebc59;
+            transform: scale(1.1);
+        }
+
+        .call-btn {
+            background: var(--brand);
+        }
+
+        .call-btn:hover {
+            background: var(--brand-hover);
+            transform: scale(1.1);
+        }
+
+        .email-btn {
+            background: #ea4335;
+        }
+
+        .email-btn:hover {
+            background: #d33d2c;
+            transform: scale(1.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header .container {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            nav {
+                justify-content: center;
+            }
+
+            .hero .container {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-image {
+                display: none;
+            }
+
+            .service-list,
+            .process-grid,
+            .features-grid,
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .floating-contact {
+                bottom: 20px;
+                right: 20px;
+                flex-direction: row;
+            }
+
+            .floating-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <a href="#" class="logo">
+                <span class="logo-box">SCS</span>
+                <span>Shubh Consultancy</span>
+            </a>
+            <nav>
+                <a href="#home">Home</a>
+                <a href="#services">Services</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#why-us">Why Us</a>
+                <a href="#testimonials">Reviews</a>
+                <a href="#contact">Contact</a>
+            </nav>
+            <div class="header-cta">
+                <a href="tel:+917011340730" class="header-phone">📞 +91-7011340730</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <span>TRUSTED SINCE 2015 · GHAZIABAD</span>
+                <h1>Licensing, tax and compliance handled properly — so you can get back to the business.</h1>
+                <p>From FSSAI licences and GST registration to company incorporation, trademarks, ROC filings and digital marketing — Shubh Consultancy Services runs the paperwork end to end for over 2,500 businesses across India.</p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="document.getElementById('services').scrollIntoView({behavior: 'smooth'})">Explore Services</button>
+                    <a href="https://wa.me/917011340730?text=Hi%20Shubh%20Consultancy%20Services%2C%20I%20would%20like%20to%20enquire%20about%20your%20services." class="btn-secondary" target="_blank">Chat on WhatsApp</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                🏢
+            </div>
+        </div>
+    </section>
+
+    <!-- Assurances -->
+    <section class="assurances">
+        <div class="container">
+            <div class="assurance-item">
+                <strong>✓ Filed by qualified professionals</strong>
+            </div>
+            <div class="assurance-item">
+                <strong>⏱️ Transparent timelines, no surprises</strong>
+            </div>
+            <div class="assurance-item">
+                <strong>👤 Single point of contact throughout</strong>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats">
+        <div class="container">
+            <div class="stat-item">
+                <h3>2,500+</h3>
+                <p>Clients served across India</p>
+            </div>
+            <div class="stat-item">
+                <h3>15+</h3>
+                <p>Years of combined experience</p>
+            </div>
+            <div class="stat-item">
+                <h3>4.6</h3>
+                <p>Average client rating</p>
+            </div>
+            <div class="stat-item">
+                <h3>20+</h3>
+                <p>Services under one roof</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Everything a growing Indian business has to file, in one place</h2>
+                <p>Seven practice areas, one team. Pick the service you need and see exactly what it costs, what documents are required and how long it takes.</p>
+            </div>
+
+            <div class="service-categories">
+                <button class="category-tab active" onclick="showCategory('startup')">Startup</button>
+                <button class="category-tab" onclick="showCategory('registrations')">Registrations</button>
+                <button class="category-tab" onclick="showCategory('trademark')">Trademark</button>
+                <button class="category-tab" onclick="showCategory('gst')">GST</button>
+                <button class="category-tab" onclick="showCategory('income-tax')">Income Tax</button>
+                <button class="category-tab" onclick="showCategory('compliance')">Compliance</button>
+                <button class="category-tab" onclick="showCategory('it')">IT Services</button>
+            </div>
+
+            <!-- Startup Services -->
+            <div id="startup" class="service-list" style="display: grid;">
+                <a href="#" class="service-link">Private Limited Company Registration</a>
+                <a href="#" class="service-link">One Person Company (OPC) Registration</a>
+                <a href="#" class="service-link">Limited Liability Partnership (LLP) Registration</a>
+                <a href="#" class="service-link">Partnership Firm Registration</a>
+                <a href="#" class="service-link">Proprietorship Firm Registration</a>
+                <a href="#" class="service-link">Section 8 / NGO Registration</a>
+            </div>
+
+            <!-- Registrations Services -->
+            <div id="registrations" class="service-list" style="display: none;">
+                <a href="#" class="service-link">FSSAI Food Licence</a>
+                <a href="#" class="service-link">Udyam Registration (MSME)</a>
+                <a href="#" class="service-link">Shop & Establishment Licence</a>
+                <a href="#" class="service-link">Import-Export Code (IEC)</a>
+            </div>
+
+            <!-- Trademark Services -->
+            <div id="trademark" class="service-list" style="display: none;">
+                <a href="#" class="service-link">Trademark Registration</a>
+                <a href="#" class="service-link">Trademark Search & Clearance</a>
+                <a href="#" class="service-link">Trademark Renewal</a>
+            </div>
+
+            <!-- GST Services -->
+            <div id="gst" class="service-list" style="display: none;">
+                <a href="#" class="service-link">GST Registration</a>
+                <a href="#" class="service-link">GST Return Filing (GSTR-1, GSTR-3B, GSTR-9)</a>
+                <a href="#" class="service-link">GST Annual Filing</a>
+                <a href="#" class="service-link">GST Compliance & Reconciliation</a>
+            </div>
+
+            <!-- Income Tax Services -->
+            <div id="income-tax" class="service-list" style="display: none;">
+                <a href="#" class="service-link">Income Tax Return Filing (Individual)</a>
+                <a href="#" class="service-link">Income Tax Return Filing (Business)</a>
+                <a href="#" class="service-link">Accounting Services & Bookkeeping</a>
+                <a href="#" class="service-link">Tax Audit (Sec 44AB)</a>
+            </div>
+
+            <!-- Compliance Services -->
+            <div id="compliance" class="service-list" style="display: none;">
+                <a href="#" class="service-link">ROC Annual Compliance (MCA)</a>
+                <a href="#" class="service-link">Annual Returns & Statutory Filings</a>
+                <a href="#" class="service-link">Directors & Shareholders Management</a>
+                <a href="#" class="service-link">Board Meetings & Board Resolutions</a>
+            </div>
+
+            <!-- IT Services -->
+            <div id="it" class="service-list" style="display: none;">
+                <a href="#" class="service-link">Website Design & Development</a>
+                <a href="#" class="service-link">SEO & Search Marketing</a>
+                <a href="#" class="service-link">Social Media Management</a>
+                <a href="#" class="service-link">SEO & Social Media Packages</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>Four steps from enquiry to certificate</h2>
+                <p>We keep the process transparent so you always know which stage your application is at and what happens next.</p>
+            </div>
+            <div class="process-grid">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <h3>Share your requirement</h3>
+                    <p>Call or WhatsApp us with what you need. We ask a few questions to understand your business and confirm exactly which registration or filing applies to you.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <h3>Get a fixed quote</h3>
+                    <p>You receive a written quote with the government fee and our professional fee separated, plus a realistic timeline. No hidden charges added later.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <h3>Submit your documents</h3>
+                    <p>We send you a simple checklist. Share the documents over WhatsApp or email and our team verifies everything before anything is filed.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <h3>We file and follow up</h3>
+                    <p>Our experts prepare and file the application, respond to any departmental queries, and hand you the final certificate along with all acknowledgements.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="why-choose" id="why-us">
+        <div class="container">
+            <div class="section-header">
+                <h2>Compliance handled properly, the first time</h2>
+                <p>Businesses across Delhi NCR rely on us because we treat filings as legal work that has to be correct, not paperwork to rush through.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature">
+                    <div class="feature-icon">👨‍⚖️</div>
+                    <div>
+                        <h3>Qualified in-house experts</h3>
+                        <p>Chartered Accountants, Company Secretaries and legal professionals handle your file directly — not an untrained call centre.</p>
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">💰</div>
+                    <div>
+                        <h3>Transparent pricing</h3>
+                        <p>Government fees and professional fees are quoted separately in writing before we begin. Nothing is added midway.</p>
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📅</div>
+                    <div>
+                        <h3>Deadlines tracked for you</h3>
+                        <p>We monitor your GST, ITR and ROC due dates and remind you in advance so you never pay a late fee.</p>
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">👤</div>
+                    <div>
+                        <h3>One dedicated contact</h3>
+                        <p>A single relationship manager owns your case from start to finish. You never re-explain your situation.</p>
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔒</div>
+                    <div>
+                        <h3>Documents kept confidential</h3>
+                        <p>Your financial records and identity documents are handled under strict confidentiality and never shared.</p>
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">✅</div>
+                    <div>
+                        <h3>Complete compliance cover</h3>
+                        <p>Registration, licensing, tax filing, trademark and IT services under one roof — no juggling multiple vendors.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2>Trusted by founders and business owners</h2>
+                <p>Join 2,500+ satisfied clients who transformed their business with our guidance</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"Shubh Consultancy Services provided exceptional support in obtaining our FSSAI license and ensuring legal compliance. Their expertise made the process seamless, and we were able to focus on growing our business with confidence."</div>
+                    <div class="testimonial-author">Sandeep Bhandari</div>
+                    <div class="testimonial-title">CEO, Chai Bunk</div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"Shubh Consultancy Services guided us through the entire licensing process. Their expertise ensured everything was handled smoothly, allowing us to focus on expanding our operations."</div>
+                    <div class="testimonial-author">Satyam Parkhi</div>
+                    <div class="testimonial-title">Owner, Chicka Litti</div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"From handling our tax audit and balance sheet to trust deed amendments, Shubh Consultancy Services has been a trusted partner. Their professional approach and prompt service have exceeded our expectations."</div>
+                    <div class="testimonial-author">Mr. Shailesh</div>
+                    <div class="testimonial-title">Founder Trustee</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" id="contact">
+        <div class="container">
+            <h2>Not sure which registration applies to you?</h2>
+            <p>Talk to a qualified expert. We will tell you exactly what your business needs, what it costs, and how long it takes — before you commit to anything.</p>
+            <div class="cta-buttons">
+                <a href="tel:+917011340730" class="cta-button">📞 Call +91-7011340730</a>
+                <a href="https://wa.me/917011340730?text=Hi%20Shubh%20Consultancy%20Services%2C%20I%20would%20like%20to%20enquire%20about%20your%20services." class="cta-button" target="_blank">💬 Chat on WhatsApp</a>
+            </div>
+            <p style="margin-top: 30px; font-size: 13px;">Mon – Sat, 10:00 AM – 7:00 PM · marketing.shubhcs@gmail.com</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About SCS</h3>
+                    <p>We offer expert accounting, licensing and digital marketing solutions to streamline operations, ensure compliance and fuel business growth.</p>
+                    <p style="margin-top: 16px;">📍 S-20/1, Ground Floor, Shalimar Garden Extension 1, Ghaziabad, Uttar Pradesh 201005</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Startup Services</h3>
+                    <a href="#">Private Limited Company</a>
+                    <a href="#">One Person Company</a>
+                    <a href="#">LLP Registration</a>
+                    <a href="#">Partnership Firm</a>
+                    <a href="#">Proprietorship</a>
+                    <a href="#">NGO Registration</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Compliance</h3>
+                    <a href="#">FSSAI Licence</a>
+                    <a href="#">GST Registration</a>
+                    <a href="#">GST Return Filing</a>
+                    <a href="#">ITR Filing</a>
+                    <a href="#">ROC Compliance</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <a href="tel:+917011340730">📞 +91-7011340730</a>
+                    <a href="tel:+919873207632">📞 +91-9873207632</a>
+                    <a href="mailto:marketing.shubhcs@gmail.com">📧 marketing.shubhcs@gmail.com</a>
+                    <p style="margin-top: 16px;">Mon – Sat, 10:00 AM – 7:00 PM</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>Copyright © 2026 Shubh Consultancy Services. All rights reserved. | <a href="#" style="color: inherit;">Privacy Policy</a> | <a href="#" style="color: inherit;">Terms & Conditions</a> | <a href="#" style="color: inherit;">Refund Policy</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Contact Buttons -->
+    <div class="floating-contact">
+        <a href="https://wa.me/917011340730?text=Hi%20Shubh%20Consultancy%20Services%2C%20I%20would%20like%20to%20enquire%20about%20your%20services." class="floating-btn whatsapp-btn" title="WhatsApp Us" target="_blank">💬</a>
+        <a href="tel:+917011340730" class="floating-btn call-btn" title="Call Us">📞</a>
+        <a href="mailto:marketing.shubhcs@gmail.com" class="floating-btn email-btn" title="Email Us">✉️</a>
+    </div>
+
+    <script>
+        function showCategory(category) {
+            // Hide all lists
+            const lists = document.querySelectorAll('.service-list');
+            lists.forEach(list => list.style.display = 'none');
+
+            // Show selected category
+            document.getElementById(category).style.display = 'grid';
+
+            // Update active tab
+            const tabs = document.querySelectorAll('.category-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

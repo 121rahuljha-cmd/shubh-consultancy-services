@@ -1,0 +1,25 @@
+export type LocationStatus = 'active' | 'planned' | 'archived'
+export type State = { id: string; name: string; slug: string; code: string; status: LocationStatus }
+export type City = { id: string; name: string; slug: string; stateId: string; status: LocationStatus; rank?: number }
+
+export const states: State[] = [
+  ['Andhra Pradesh', 'AP'], ['Arunachal Pradesh', 'AR'], ['Assam', 'AS'], ['Bihar', 'BR'], ['Chhattisgarh', 'CG'], ['Goa', 'GA'], ['Gujarat', 'GJ'], ['Haryana', 'HR'], ['Himachal Pradesh', 'HP'], ['Jharkhand', 'JH'], ['Karnataka', 'KA'], ['Kerala', 'KL'], ['Madhya Pradesh', 'MP'], ['Maharashtra', 'MH'], ['Manipur', 'MN'], ['Meghalaya', 'ML'], ['Mizoram', 'MZ'], ['Nagaland', 'NL'], ['Odisha', 'OD'], ['Punjab', 'PB'], ['Rajasthan', 'RJ'], ['Sikkim', 'SK'], ['Tamil Nadu', 'TN'], ['Telangana', 'TS'], ['Tripura', 'TR'], ['Uttar Pradesh', 'UP'], ['Uttarakhand', 'UK'], ['West Bengal', 'WB'], ['Andaman and Nicobar Islands', 'AN'], ['Chandigarh', 'CH'], ['Dadra and Nagar Haveli and Daman and Diu', 'DH'], ['Delhi', 'DL'], ['Jammu and Kashmir', 'JK'], ['Ladakh', 'LA'], ['Lakshadweep', 'LD'], ['Puducherry', 'PY']
+].map(([name, code]) => ({ id: `state-${code.toLowerCase()}`, name, slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'), code, status: 'active' }))
+
+const cityRows: [string, string, string][] = [
+  ['Mumbai', 'MH', 'mumbai'], ['Pune', 'MH', 'pune'], ['Nagpur', 'MH', 'nagpur'], ['Bengaluru', 'KA', 'bengaluru'], ['Mysuru', 'KA', 'mysuru'], ['Hyderabad', 'TS', 'hyderabad'], ['Delhi', 'DL', 'delhi'], ['Noida', 'UP', 'noida'], ['Ghaziabad', 'UP', 'ghaziabad'], ['Lucknow', 'UP', 'lucknow'], ['Dehradun', 'UK', 'dehradun'], ['Chandigarh', 'CH', 'chandigarh'], ['Jaipur', 'RJ', 'jaipur'], ['Ahmedabad', 'GJ', 'ahmedabad'], ['Kolkata', 'WB', 'kolkata'], ['Chennai', 'TN', 'chennai'], ['Kochi', 'KL', 'kochi']
+]
+export const cities: City[] = cityRows.map(([name, code, slug]) => ({ id: `city-${slug}`, name, slug, stateId: `state-${code.toLowerCase()}`, status: 'active' }))
+const top100Rows: [string, string, string][] = [
+  ...cityRows,
+  ['Thane', 'MH', 'thane'], ['Vasai-Virar', 'MH', 'vasai-virar'], ['Aurangabad', 'MH', 'aurangabad'], ['Navi Mumbai', 'MH', 'navi-mumbai'], ['Nanded', 'MH', 'nanded'], ['Kolhapur', 'MH', 'kolhapur'], ['Amravati', 'MH', 'amravati'], ['Akola', 'MH', 'akola'],
+  ['Hubballi', 'KA', 'hubballi'], ['Mangaluru', 'KA', 'mangaluru'], ['Belagavi', 'KA', 'belagavi'], ['Kalaburagi', 'KA', 'kalaburagi'], ['Davanagere', 'KA', 'davanagere'], ['Tumakuru', 'KA', 'tumakuru'],
+  ['Vijayawada', 'AP', 'vijayawada'], ['Visakhapatnam', 'AP', 'visakhapatnam'], ['Tirupati', 'AP', 'tirupati'], ['Guntur', 'AP', 'guntur'], ['Nellore', 'AP', 'nellore'], ['Patna', 'BR', 'patna'], ['Gaya', 'BR', 'gaya'], ['Raipur', 'CG', 'raipur'], ['Bhilai', 'CG', 'bhilai'], ['Panaji', 'GA', 'panaji'],
+  ['Surat', 'GJ', 'surat'], ['Vadodara', 'GJ', 'vadodara'], ['Rajkot', 'GJ', 'rajkot'], ['Gandhinagar', 'GJ', 'gandhinagar'], ['Gurugram', 'HR', 'gurugram'], ['Faridabad', 'HR', 'faridabad'], ['Panipat', 'HR', 'panipat'], ['Shimla', 'HP', 'shimla'], ['Ranchi', 'JH', 'ranchi'], ['Jamshedpur', 'JH', 'jamshedpur'], ['Dhanbad', 'JH', 'dhanbad'],
+  ['Thiruvananthapuram', 'KL', 'thiruvananthapuram'], ['Kozhikode', 'KL', 'kozhikode'], ['Bhopal', 'MP', 'bhopal'], ['Indore', 'MP', 'indore'], ['Gwalior', 'MP', 'gwalior'], ['Jabalpur', 'MP', 'jabalpur'], ['Imphal', 'MN', 'imphal'], ['Shillong', 'ML', 'shillong'], ['Aizawl', 'MZ', 'aizawl'], ['Kohima', 'NL', 'kohima'],
+  ['Bhubaneswar', 'OD', 'bhubaneswar'], ['Cuttack', 'OD', 'cuttack'], ['Amritsar', 'PB', 'amritsar'], ['Ludhiana', 'PB', 'ludhiana'], ['Jalandhar', 'PB', 'jalandhar'], ['Kota', 'RJ', 'kota'], ['Udaipur', 'RJ', 'udaipur'], ['Jodhpur', 'RJ', 'jodhpur'], ['Ajmer', 'RJ', 'ajmer'],
+  ['Coimbatore', 'TN', 'coimbatore'], ['Madurai', 'TN', 'madurai'], ['Tiruchirappalli', 'TN', 'tiruchirappalli'], ['Warangal', 'TS', 'warangal'], ['Nizamabad', 'TS', 'nizamabad'], ['Agra', 'UP', 'agra'], ['Kanpur', 'UP', 'kanpur'], ['Prayagraj', 'UP', 'prayagraj'], ['Varanasi', 'UP', 'varanasi'], ['Meerut', 'UP', 'meerut'], ['Bareilly', 'UP', 'bareilly'], ['Aligarh', 'UP', 'aligarh'], ['Moradabad', 'UP', 'moradabad'], ['Gorakhpur', 'UP', 'gorakhpur'], ['Haridwar', 'UK', 'haridwar'], ['Haldwani', 'UK', 'haldwani'], ['Siliguri', 'WB', 'siliguri'], ['Asansol', 'WB', 'asansol'], ['Durgapur', 'WB', 'durgapur'], ['Srinagar', 'JK', 'srinagar'], ['Jammu', 'JK', 'jammu'], ['Leh', 'LA', 'leh'], ['Daman', 'DH', 'daman'], ['Mathura', 'UP', 'mathura'], ['Hapur', 'UP', 'hapur'], ['Kurnool', 'AP', 'kurnool'], ['Thanjavur', 'TN', 'thanjavur'], ['Kannur', 'KL', 'kannur'], ['Berhampur', 'OD', 'berhampur']
+]
+export const top100Cities: City[] = top100Rows.slice(0, 100).map(([name, code, slug], index) => ({ id: `top-city-${slug}`, name, slug, stateId: `state-${code.toLowerCase()}`, status: 'active', rank: index + 1 }))
+export const getState = (id: string) => states.find((state) => state.id === id)
+export const getCity = (id: string) => cities.find((city) => city.id === id)

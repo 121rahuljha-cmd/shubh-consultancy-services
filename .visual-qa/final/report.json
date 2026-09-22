@@ -1,0 +1,366 @@
+{
+  "desktop": {
+    "fullPage": {
+      "width": 1502,
+      "height": 5809,
+      "diffPixels": 566818,
+      "diffRatio": 0.064964,
+      "originalA": {
+        "width": 1502,
+        "height": 5809
+      },
+      "originalB": {
+        "width": 1502,
+        "height": 5712
+      }
+    },
+    "sections": {
+      "header": {
+        "width": 1440,
+        "height": 109,
+        "diffPixels": 0,
+        "diffRatio": 0,
+        "originalA": {
+          "width": 1440,
+          "height": 109
+        },
+        "originalB": {
+          "width": 1440,
+          "height": 109
+        }
+      },
+      "hero": {
+        "width": 1440,
+        "height": 878,
+        "diffPixels": 2673,
+        "diffRatio": 0.002114,
+        "originalA": {
+          "width": 1440,
+          "height": 878
+        },
+        "originalB": {
+          "width": 1440,
+          "height": 878
+        }
+      },
+      "service_search": {
+        "width": 622,
+        "height": 145,
+        "diffPixels": 0,
+        "diffRatio": 0,
+        "originalA": {
+          "width": 622,
+          "height": 145
+        },
+        "originalB": {
+          "width": 622,
+          "height": 145
+        }
+      },
+      "popular_services": {
+        "width": 622,
+        "height": 69,
+        "diffPixels": 0,
+        "diffRatio": 0,
+        "originalA": {
+          "width": 622,
+          "height": 69
+        },
+        "originalB": {
+          "width": 622,
+          "height": 69
+        }
+      },
+      "trust_indicators": {
+        "width": 622,
+        "height": 51,
+        "diffPixels": 0,
+        "diffRatio": 0,
+        "originalA": {
+          "width": 622,
+          "height": 51
+        },
+        "originalB": {
+          "width": 622,
+          "height": 51
+        }
+      },
+      "statistics": {
+        "width": 1440,
+        "height": 167,
+        "diffPixels": 13292,
+        "diffRatio": 0.055273,
+        "originalA": {
+          "width": 1440,
+          "height": 167
+        },
+        "originalB": {
+          "width": 1440,
+          "height": 165
+        }
+      },
+      "services": {
+        "width": 1440,
+        "height": 1404,
+        "diffPixels": 88535,
+        "diffRatio": 0.043791,
+        "originalA": {
+          "width": 1440,
+          "height": 1404
+        },
+        "originalB": {
+          "width": 1440,
+          "height": 1384
+        }
+      },
+      "how_it_works": {
+        "width": 1440,
+        "height": 683,
+        "diffPixels": 97147,
+        "diffRatio": 0.098775,
+        "originalA": {
+          "width": 1440,
+          "height": 683
+        },
+        "originalB": {
+          "width": 1440,
+          "height": 647
+        }
+      },
+      "why_choose_us": {
+        "width": 1440,
+        "height": 901,
+        "diffPixels": 122496,
+        "diffRatio": 0.094414,
+        "originalA": {
+          "width": 1440,
+          "height": 901
+        },
+        "originalB": {
+          "width": 1440,
+          "height": 886
+        }
+      },
+      "testimonials": {
+        "width": 1440,
+        "height": 716,
+        "diffPixels": 92754,
+        "diffRatio": 0.089962,
+        "originalA": {
+          "width": 1440,
+          "height": 716
+        },
+        "originalB": {
+          "width": 1440,
+          "height": 677
+        }
+      },
+      "cta": {
+        "width": 1440,
+        "height": 444,
+        "diffPixels": 51107,
+        "diffRatio": 0.079935,
+        "originalA": {
+          "width": 1440,
+          "height": 429
+        },
+        "originalB": {
+          "width": 1440,
+          "height": 444
+        }
+      },
+      "footer": {
+        "width": 1440,
+        "height": 527,
+        "diffPixels": 15699,
+        "diffRatio": 0.020687,
+        "originalA": {
+          "width": 1440,
+          "height": 527
+        },
+        "originalB": {
+          "width": 1440,
+          "height": 527
+        }
+      }
+    }
+  },
+  "responsive": [
+    {
+      "width": 360,
+      "diff": {
+        "width": 360,
+        "height": 10483,
+        "diffPixels": 378638,
+        "diffRatio": 0.100331,
+        "originalA": {
+          "width": 360,
+          "height": 10483
+        },
+        "originalB": {
+          "width": 360,
+          "height": 10285
+        }
+      }
+    },
+    {
+      "width": 375,
+      "diff": {
+        "width": 375,
+        "height": 10417,
+        "diffPixels": 387312,
+        "diffRatio": 0.099149,
+        "originalA": {
+          "width": 375,
+          "height": 10417
+        },
+        "originalB": {
+          "width": 375,
+          "height": 10218
+        }
+      }
+    },
+    {
+      "width": 390,
+      "diff": {
+        "width": 390,
+        "height": 10334,
+        "diffPixels": 396378,
+        "diffRatio": 0.09835,
+        "originalA": {
+          "width": 390,
+          "height": 10334
+        },
+        "originalB": {
+          "width": 390,
+          "height": 10136
+        }
+      }
+    },
+    {
+      "width": 414,
+      "diff": {
+        "width": 414,
+        "height": 10179,
+        "diffPixels": 397525,
+        "diffRatio": 0.094332,
+        "originalA": {
+          "width": 414,
+          "height": 10179
+        },
+        "originalB": {
+          "width": 414,
+          "height": 10001
+        }
+      }
+    },
+    {
+      "width": 768,
+      "diff": {
+        "width": 768,
+        "height": 7435,
+        "diffPixels": 293541,
+        "diffRatio": 0.051408,
+        "originalA": {
+          "width": 768,
+          "height": 7435
+        },
+        "originalB": {
+          "width": 768,
+          "height": 7425
+        }
+      }
+    },
+    {
+      "width": 1024,
+      "diff": {
+        "width": 1317,
+        "height": 6045,
+        "diffPixels": 408146,
+        "diffRatio": 0.051266,
+        "originalA": {
+          "width": 1317,
+          "height": 6045
+        },
+        "originalB": {
+          "width": 1317,
+          "height": 5990
+        }
+      }
+    },
+    {
+      "width": 1280,
+      "diff": {
+        "width": 1422,
+        "height": 5809,
+        "diffPixels": 540103,
+        "diffRatio": 0.065385,
+        "originalA": {
+          "width": 1422,
+          "height": 5809
+        },
+        "originalB": {
+          "width": 1422,
+          "height": 5712
+        }
+      }
+    },
+    {
+      "width": 1440,
+      "diff": {
+        "width": 1502,
+        "height": 5809,
+        "diffPixels": 566818,
+        "diffRatio": 0.064964,
+        "originalA": {
+          "width": 1502,
+          "height": 5809
+        },
+        "originalB": {
+          "width": 1502,
+          "height": 5712
+        }
+      }
+    }
+  ],
+  "smoke": {
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "warnings": [],
+    "brokenImages": [],
+    "links": {
+      "phoneLinks": [
+        "tel:+917011340730",
+        "tel:+917011340730",
+        "tel:+917011340730",
+        "tel:+917011340730",
+        "tel:+917011340730",
+        "tel:+917011340730",
+        "tel:+919873207632",
+        "tel:+917011340730"
+      ],
+      "whatsappLinks": [
+        "https://wa.me/917011340730?text=Hi%20Shubh%20Consultancy%20Services%2C%20I%20would%20like%20to%20enquire%20about%20your%20services.",
+        "https://wa.me/917011340730?text=Hi%20Shubh%20Consultancy%20Services%2C%20I%20would%20like%20to%20enquire%20about%20your%20services.",
+        "https://wa.me/917011340730?text=Hi%20Shubh%20Consultancy%20Services%2C%20I%20would%20like%20to%20enquire%20about%20your%20services."
+      ],
+      "ctaLinks": [
+        {
+          "text": "Call +91-7011340730",
+          "href": "tel:+917011340730"
+        },
+        {
+          "text": "Chat on WhatsApp",
+          "href": "https://wa.me/917011340730?text=Hi%20Shubh%20Consultancy%20Services%2C%20I%20would%20like%20to%20enquire%20about%20your%20services."
+        }
+      ]
+    },
+    "contactOk": true,
+    "servicesAnchorY": 1151,
+    "searchResults": 4,
+    "mobileMenuOpen": true,
+    "mobileMenuClosed": true,
+    "mobileErrors": []
+  }
+}

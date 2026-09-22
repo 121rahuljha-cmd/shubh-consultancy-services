@@ -1,0 +1,6 @@
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { cities, getState } from '@/lib/locations'
+
+export const metadata: Metadata = { title: 'Indian Cities', description: 'Browse structured city data for future location-specific service pages.' }
+export default function CitiesPage() { return <main><section className="bg-primary"><div className="mx-auto max-w-6xl px-4 py-14 md:px-6"><nav className="text-sm text-primary-foreground/70"><Link href="/">Home</Link> / Cities</nav><h1 className="mt-6 font-serif text-4xl font-bold text-primary-foreground">Cities</h1><p className="mt-4 max-w-2xl text-lg text-primary-foreground/75">Structured city data for future editorial pages. Cities are not automatically turned into thin service pages.</p></div></section><div className="mx-auto grid max-w-6xl gap-4 px-4 py-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">{cities.map((city) => <article key={city.id} className="rounded-xl border border-border bg-card p-4"><h2 className="font-serif text-lg font-bold text-navy">{city.name}</h2><p className="mt-1 text-xs uppercase text-muted-foreground">{getState(city.stateId)?.name ?? city.stateId} · {city.status}</p></article>)}</div></main> }
