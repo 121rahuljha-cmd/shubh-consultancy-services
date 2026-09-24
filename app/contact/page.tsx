@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
-import { contact } from '@/lib/site-data'
+import { contact, getVisibleContactNumbers } from '@/lib/site-data'
 import { ContactForm } from '@/components/contact-form'
 
 export const metadata: Metadata = {
@@ -12,6 +12,8 @@ export const metadata: Metadata = {
 }
 
 export default function ContactPage() {
+  const visiblePhones = getVisibleContactNumbers()
+
   return (
     <>
       <section className="bg-primary">
@@ -45,39 +47,25 @@ export default function ContactPage() {
           </h2>
 
           <div className="flex flex-col gap-4">
-            <a
-              href={contact.phonePrimaryHref}
-              className="group flex items-start gap-4 rounded-xl border border-border bg-card p-5 transition-colors hover:border-accent/50"
-            >
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
-                <Phone className="size-5" aria-hidden="true" />
-              </span>
-              <span className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-wider text-muted-foreground">
-                  Primary line
+            {visiblePhones.map((phone, index) => (
+              <a
+                key={`${phone.formatted}-${phone.href}`}
+                href={phone.href}
+                className="group flex items-start gap-4 rounded-xl border border-border bg-card p-5 transition-colors hover:border-accent/50"
+              >
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
+                  <Phone className="size-5" aria-hidden="true" />
                 </span>
-                <span className="font-serif text-lg font-semibold text-primary group-hover:text-accent">
-                  {contact.phonePrimary}
+                <span className="flex flex-col gap-1">
+                  <span className="text-xs uppercase tracking-wider text-muted-foreground">
+                    {index === 0 ? 'Primary line' : 'Alternate line'}
+                  </span>
+                  <span className="font-serif text-lg font-semibold text-primary group-hover:text-accent">
+                    {phone.formatted}
+                  </span>
                 </span>
-              </span>
-            </a>
-
-            <a
-              href={contact.phoneSecondaryHref}
-              className="group flex items-start gap-4 rounded-xl border border-border bg-card p-5 transition-colors hover:border-accent/50"
-            >
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
-                <Phone className="size-5" aria-hidden="true" />
-              </span>
-              <span className="flex flex-col gap-1">
-                <span className="text-xs uppercase tracking-wider text-muted-foreground">
-                  Alternate line
-                </span>
-                <span className="font-serif text-lg font-semibold text-primary group-hover:text-accent">
-                  {contact.phoneSecondary}
-                </span>
-              </span>
-            </a>
+              </a>
+            ))}
 
             <a
               href={contact.emailHref}

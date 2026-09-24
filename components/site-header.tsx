@@ -14,8 +14,8 @@ import {
   X,
   ArrowRight,
 } from 'lucide-react'
-import { contact } from '@/lib/site-data'
-import { getPublicServiceGroups, type PublicServiceGroup } from '@/lib/public-services'
+import { contact, getVisibleContactNumbers } from '@/lib/site-data'
+import { getPublicServiceGroups, getSavedPublicServiceGroups, type PublicServiceGroup } from '@/lib/public-services'
 import { cn } from '@/lib/utils'
 
 function Logo() {
@@ -26,12 +26,12 @@ function Logo() {
       aria-label="Shubh Consultancy Services — home"
     >
       <Image
-        src="/placeholder-logo.svg"
+        src="/scs-logo.svg"
         alt="Shubh Consultancy Services logo"
-        width={190}
+        width={230}
         height={48}
         priority
-        className="h-10 w-auto object-contain"
+        className="h-10 w-[190px] shrink-0 object-contain"
       />
     </Link>
   )
@@ -43,6 +43,7 @@ export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mobileGroup, setMobileGroup] = useState<string | null>(null)
   const pathname = usePathname()
+  const visiblePhones = getVisibleContactNumbers()
 
   useEffect(() => {
     setMobileOpen(false)
@@ -57,9 +58,11 @@ export function SiteHeader() {
   }, [mobileOpen])
 
   useEffect(() => {
-    const refresh = () => setNavGroups(getPublicServiceGroups())
+    const refresh = () => setNavGroups(getSavedPublicServiceGroups())
+    refresh()
     window.addEventListener('scs-service-builder-updated', refresh)
-    return () => window.removeEventListener('scs-service-builder-updated', refresh)
+    window.addEventListener('scs-menu-updated', refresh)
+    return () => { window.removeEventListener('scs-service-builder-updated', refresh); window.removeEventListener('scs-menu-updated', refresh) }
   }, [])
 
   return (
@@ -80,13 +83,20 @@ export function SiteHeader() {
               {contact.email}
             </a>
             <span className="h-3.5 w-px bg-white/20" aria-hidden="true" />
-            <a
-              href={contact.phonePrimaryHref}
-              className="flex items-center gap-1.5 font-semibold text-white transition-colors hover:text-brand"
-            >
-              <Phone className="size-3.5 text-brand" aria-hidden="true" />
-              {contact.phonePrimary}
-            </a>
+            <div className="flex items-center gap-3">
+              <Phone className="size-3.5 shrink-0 text-brand" aria-hidden="true" />
+              {visiblePhones.map((phone, index) => (
+                <div key={`${phone.formatted}-${phone.href}`} className="flex items-center gap-3">
+                  {index > 0 && <span className="text-white/30">|</span>}
+                  <a
+                    href={phone.href}
+                    className="font-semibold text-white transition-colors hover:text-brand"
+                  >
+                    {phone.formatted}
+                  </a>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -98,26 +108,16 @@ export function SiteHeader() {
 
           {/* Desktop nav */}
           <nav
-            className="hidden h-full items-center lg:flex"
+            className="relative hidden h-full items-center overflow-visible lg:flex"
             aria-label="Main navigation"
             onMouseLeave={() => setOpenGroup(null)}
           >
-            <Link
-              href="/"
-              className={cn(
-                'flex h-full items-center px-3 text-[13px] font-bold uppercase tracking-wide transition-colors',
-                pathname === '/' ? 'text-brand' : 'text-navy hover:text-brand',
-              )}
-            >
-              Home
-            </Link>
-
             {navGroups.map((group) => {
               const isOpen = openGroup === group.label
               return (
                 <div
                   key={group.label}
-                  className="h-full"
+                  className="relative h-full"
                   onMouseEnter={() => setOpenGroup(group.label)}
                 >
                   <button
@@ -125,7 +125,7 @@ export function SiteHeader() {
                     aria-expanded={isOpen}
                     onClick={() => setOpenGroup(isOpen ? null : group.label)}
                     className={cn(
-                      'flex h-full items-center gap-1 px-3 text-[13px] font-bold uppercase tracking-wide transition-colors',
+                      'flex h-full items-center gap-1 px-0.5 text-[13px] font-bold uppercase tracking-wide transition-colors 2xl:px-3',
                       isOpen ? 'text-brand' : 'text-navy hover:text-brand',
                     )}
                   >
@@ -140,7 +140,7 @@ export function SiteHeader() {
                   </button>
 
                   {isOpen && (
-                    <div className="absolute inset-x-0 top-full border-b border-border bg-background shadow-xl">
+                    <div className="absolute left-1/2 top-full z-50 w-[min(78vw,1200px)] -translate-x-1/2 border-b border-border bg-background shadow-xl">
                       <div className="container-page grid gap-8 py-8 lg:grid-cols-[260px_1fr]">
                         <div className="flex flex-col gap-3 border-r border-border pr-8">
                           <span className="eyebrow">{group.label}</span>
@@ -186,7 +186,7 @@ export function SiteHeader() {
             <Link
               href="/contact"
               className={cn(
-                'flex h-full items-center px-3 text-[13px] font-bold uppercase tracking-wide transition-colors',
+                'flex h-full items-center px-0.5 text-[13px] font-bold uppercase tracking-wide transition-colors 2xl:px-3',
                 pathname === '/contact'
                   ? 'text-brand'
                   : 'text-navy hover:text-brand',
@@ -244,13 +244,6 @@ export function SiteHeader() {
             className="flex-1 overflow-y-auto px-4 py-4"
             aria-label="Mobile navigation"
           >
-            <Link
-              href="/"
-              className="block border-b border-border py-3.5 font-heading text-sm font-bold uppercase tracking-wide text-navy"
-            >
-              Home
-            </Link>
-
             {navGroups.map((group) => {
               const isOpen = mobileGroup === group.label
               return (

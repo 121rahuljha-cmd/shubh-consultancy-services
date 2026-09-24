@@ -1,20 +1,32 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import Link from 'next/link'
+import NextLink from 'next/link'
+import type { ComponentProps, ReactNode } from 'react'
 import { auditPage, CmsFaq, CmsLink, CmsPage, ContentBlock, createEmptyPage, getPages, saveCmsRevision, savePages, scoreAudit, testPage } from '@/lib/page-cms'
 import { getSections } from '@/lib/cms-sections'
 import { PageAiEditor } from '@/components/admin/page-ai-editor'
+import type { PublicPageDescriptor } from '@/lib/public-page-registry'
 
 const tabs = ['Basic', 'Intent', 'SEO', 'Content', 'Service', 'Location', 'Links', 'FAQ', 'Media', 'Schema', 'Sitemap', 'Audit', 'Preview'] as const
 type Tab = typeof tabs[number]
 const inputClass = 'w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-brand focus:ring-2 focus:ring-brand/20'
 const labelClass = 'flex flex-col gap-1.5 text-sm font-semibold text-navy'
 
+type SafeLinkProps = Omit<ComponentProps<typeof NextLink>, 'href'> & { href?: string; children: ReactNode }
+
+function Link({ href, children, ...props }: SafeLinkProps) {
+  return href ? <NextLink href={href} {...props}>{children}</NextLink> : <span {...props}>{children}</span>
+}
+
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) { return <label className={labelClass}><span>{label}</span>{children}{hint && <span className="text-xs font-normal text-muted-foreground">{hint}</span>}</label> }
 function Text({ value, onChange, placeholder, rows = 3 }: { value: string; onChange: (value: string) => void; placeholder?: string; rows?: number }) { return <textarea className={`${inputClass} resize-y`} rows={rows} value={value} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} /> }
 function Select({ value, onChange, children }: { value: string; onChange: (value: string) => void; children: React.ReactNode }) { return <select className={inputClass} value={value} onChange={(e) => onChange(e.target.value)}>{children}</select> }
 function Status({ status }: { status: 'pass' | 'warning' | 'error' }) { return <span className={`rounded-full px-2 py-0.5 text-xs font-bold uppercase ${status === 'pass' ? 'bg-emerald-100 text-emerald-700' : status === 'warning' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>{status}</span> }
+
+export function PublicPageInventory({ pages }: { pages: PublicPageDescriptor[] }) {
+  return <section className="mb-6 rounded-xl border border-border bg-background p-5"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="eyebrow">New website routes</p><h2 className="mt-2 font-serif text-2xl font-bold text-navy">Existing public pages</h2><p className="mt-1 text-sm text-muted-foreground">Only routes with a real editor expose Edit actions. Directory and unconnected routes remain explicit read-only records.</p></div><span className="text-xs font-bold text-muted-foreground">{pages.length} route records</span></div><div className="mt-5 overflow-x-auto"><table className="min-w-[1100px] w-full text-left text-sm"><thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground"><tr><th className="px-3 py-3">Page</th><th className="px-3 py-3">URL</th><th className="px-3 py-3">Type</th><th className="px-3 py-3">Service</th><th className="px-3 py-3">State</th><th className="px-3 py-3">City</th><th className="px-3 py-3">Status</th><th className="px-3 py-3">SEO</th><th className="px-3 py-3">Updated</th><th className="px-3 py-3">Actions</th></tr></thead><tbody>{pages.map((item) => <tr key={item.id} className="border-b border-border last:border-0"><td className="px-3 py-3 font-semibold text-navy">{item.title}<span className="mt-1 block text-[11px] font-normal text-muted-foreground">{item.editability === 'editable' ? 'Editable' : item.editability === 'generated' ? 'Read-only / Generated' : item.editability === 'not-connected' ? 'Read-only / Not connected' : 'Read-only by design'}</span></td><td className="px-3 py-3 font-mono text-xs text-muted-foreground">{item.url}</td><td className="px-3 py-3 capitalize text-muted-foreground">{item.pageType}</td><td className="px-3 py-3 text-muted-foreground">{item.service || '—'}</td><td className="px-3 py-3 text-muted-foreground">{item.state || '—'}</td><td className="px-3 py-3 text-muted-foreground">{item.city || '—'}</td><td className="px-3 py-3"><span className={`rounded-full px-2 py-1 text-xs font-bold uppercase ${item.status === 'live' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>{item.status}</span></td><td className="px-3 py-3"><span className={`rounded-full px-2 py-1 text-xs font-bold uppercase ${item.seoStatus === 'ready' ? 'bg-emerald-100 text-emerald-700' : item.seoStatus === 'warning' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-700'}`}>{item.seoStatus}</span></td><td className="px-3 py-3 text-xs text-muted-foreground">{item.updatedAt ? new Date(item.updatedAt).toLocaleDateString() : 'Source data'}</td><td className="px-3 py-3"><div className="flex flex-wrap gap-x-3 gap-y-1 text-xs font-bold"><Link href={item.url} target="_blank" className="text-navy hover:underline">View</Link>{item.editability === 'editable' ? <><Link href={item.editorHref as string} className="text-brand hover:underline">Edit</Link><Link href={item.editorHref as string} className="text-navy hover:underline">Duplicate</Link><Link href={item.editorHref as string} className="text-brand hover:underline">SEO Edit</Link><Link href={item.aiHref as string} className="text-brand hover:underline">AI Edit</Link></> : <Link href={item.detailsHref || '/admin/pages'} className="text-muted-foreground hover:underline">View Source/Details</Link>}</div>{item.readOnlyReason && <p className="mt-2 max-w-xs text-[11px] font-normal leading-relaxed text-muted-foreground">{item.readOnlyReason}</p>}</td></tr>)}</tbody></table></div></section>
+}
 
 function LinkEditor({ items, onChange }: { items: CmsLink[]; onChange: (items: CmsLink[]) => void }) {
   const add = () => onChange([...items, { id: crypto.randomUUID(), anchorText: '', url: '', description: '', openInNewTab: false, status: 'active', displayOrder: items.length + 1 }])

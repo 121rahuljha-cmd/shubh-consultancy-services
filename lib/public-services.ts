@@ -1,4 +1,5 @@
 import { getBuilderRecords, type ServiceBuilderRecord } from '@/lib/service-builder'
+import { filterValidMenuItems, getDefaultMenuItems, menuItemsToGroups, readMenuItems, type MenuItem } from '@/lib/menu-management'
 import { serviceCategories, services, type Service } from '@/lib/site-data'
 
 export const HOMEPAGE_SERVICE_LIMIT = 5
@@ -69,11 +70,21 @@ export function getPublicServices(): PublicService[] {
 }
 
 export function getPublicServiceGroups(): PublicServiceGroup[] {
-  const publicServices = getPublicServices()
-  return serviceCategories.map((category) => ({
-    label: category,
-    blurb: blurbs[category] ?? '',
-    items: publicServices.filter((service) => service.category === category),
+  return getMenuServiceGroups(getDefaultMenuItems(), services.map(fromSiteService))
+}
+
+export function getSavedPublicServiceGroups(): PublicServiceGroup[] {
+  const saved = filterValidMenuItems(readMenuItems())
+  const menuItems = saved.length ? saved : getDefaultMenuItems()
+  return getMenuServiceGroups(menuItems)
+}
+
+function getMenuServiceGroups(items: MenuItem[], publicServices = getPublicServices()): PublicServiceGroup[] {
+  const serviceByUrl = new Map(publicServices.map((service) => [service.href, service]))
+  return menuItemsToGroups(items).filter((group) => group.url !== '/' && group.url !== '/contact').map((group) => ({
+    label: group.label,
+    blurb: blurbs[group.label] ?? '',
+    items: group.items.filter((item) => item.url !== '/' && item.url !== '/contact').map((item, index) => serviceByUrl.get(item.url) || { slug: item.pageId, name: item.label, navLabel: item.label, category: group.label, description: '', tagline: '', order: index + 1, href: item.url, source: 'site-data' as const }),
   }))
 }
 

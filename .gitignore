@@ -15,6 +15,13 @@ __v0_jsx-dev-runtime.ts
 .env.production.local
 .env.test.local
 
+# Local/private/generated files
+.env.local
+.local/
+all.csv
+build-check.txt
+tsc-check.txt
+
 # Common ignores
 node_modules
 .next/

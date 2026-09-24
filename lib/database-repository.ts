@@ -1,5 +1,8 @@
 import 'server-only'
 
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import path from 'node:path'
+
 import type { Prisma, PrismaClient } from '@prisma/client'
 import type { AiGenerationJobRecord, ContentRevision, FaqRecord, LocationRecord, MediaAssetRecord, ServicePageRecord, SeoMetadataRecord } from '@/lib/cms-model'
 import type { ServiceBuilderRecord } from '@/lib/service-builder'
@@ -16,10 +19,22 @@ const asJson = (value: unknown) => value as Prisma.InputJsonValue
 const statusToDb = (status: 'draft' | 'published' | 'unpublished' | 'archived') => status === 'archived' ? 'UNPUBLISHED' : status.toUpperCase() as 'DRAFT' | 'PUBLISHED' | 'UNPUBLISHED'
 const statusFromDb = (status: string) => status.toLowerCase() as 'draft' | 'published' | 'unpublished'
 const serviceStatusFromDb = (status: string, visible = true) => status === 'PUBLISHED' ? 'published' as const : visible ? 'draft' as const : 'archived' as const
+type ServicePagePayload = { published: ServiceBuilderRecord; draft?: ServiceBuilderRecord }
 
-const contentOf = (page: { content: unknown; service: { id: string; name: string; slug: string; category: string; description: string; displayOrder: number; visible: boolean; status: string } }) => {
-  const content = page.content as ServiceBuilderRecord
-  return { ...content, id: page.service.id, serviceSlug: page.service.slug, serviceName: page.service.name, pageTitle: content.pageTitle || page.service.name, slug: content.slug || page.service.slug, shortDescription: content.shortDescription || page.service.description, status: serviceStatusFromDb(page.service.status, page.service.visible), visibility: page.service.visible ? 'visible' as const : 'hidden' as const, displayOrder: page.service.displayOrder, quickInfo: { ...content.quickInfo, serviceType: page.service.category || content.quickInfo.serviceType } }
+const servicePagePayload = (content: unknown): ServicePagePayload => {
+  if (content && typeof content === 'object' && 'published' in content && (content as { published?: unknown }).published) return content as ServicePagePayload
+  return { published: content as ServiceBuilderRecord }
+}
+
+const validateServiceIdentity = (record: ServiceBuilderRecord) => {
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(record.slug) || record.slug !== record.serviceSlug) throw new Error('Service URL slug cannot be changed or is invalid.')
+  if (record.seo.canonicalUrl && !record.seo.canonicalUrl.startsWith('/') && !/^https?:\/\//.test(record.seo.canonicalUrl)) throw new Error('Canonical URL must be a site path or absolute HTTP(S) URL.')
+}
+
+const contentOf = (page: { content: unknown; service: { id: string; name: string; slug: string; category: string; description: string; displayOrder: number; visible: boolean; status: string } }, includeDraft = false) => {
+  const payload = servicePagePayload(page.content)
+  const content = (includeDraft && payload.draft ? payload.draft : payload.published)
+  return { ...content, id: page.service.id, serviceSlug: page.service.slug, serviceName: page.service.name, pageTitle: content.pageTitle || page.service.name, slug: content.slug || page.service.slug, shortDescription: content.shortDescription || page.service.description, status: includeDraft && payload.draft ? 'draft' as const : serviceStatusFromDb(page.service.status, page.service.visible), visibility: page.service.visible ? 'visible' as const : 'hidden' as const, displayOrder: page.service.displayOrder, quickInfo: { ...content.quickInfo, serviceType: page.service.category || content.quickInfo.serviceType } }
 }
 
 export class DatabaseContentRepository implements ContentRepository, ScalableContentRepository {
@@ -32,7 +47,7 @@ export class DatabaseContentRepository implements ContentRepository, ScalableCon
 
   async getServices() {
     const pages = await this.db.servicePage.findMany({ where: { locationId: null }, include: { service: true }, orderBy: [{ service: { displayOrder: 'asc' } }, { updatedAt: 'desc' }] })
-    return pages.map(contentOf)
+    return pages.map((page) => contentOf(page, true))
   }
 
   async createService(record: ServiceBuilderRecord) {
@@ -46,13 +61,51 @@ export class DatabaseContentRepository implements ContentRepository, ScalableCon
   async saveService(record: ServiceBuilderRecord) { await this.updateService(record) }
 
   async updateService(record: ServiceBuilderRecord) {
+    validateServiceIdentity(record)
     const page = await this.db.servicePage.findFirst({ where: { service: { slug: record.serviceSlug }, locationId: null }, include: { service: true } })
     if (!page) throw new Error(`Service page not found: ${record.serviceSlug}`)
-    await this.db.$transaction([
-      this.db.service.update({ where: { slug: record.serviceSlug }, data: { name: record.serviceName, category: record.quickInfo.serviceType, description: record.shortDescription, icon: record.icon || '', displayOrder: record.displayOrder || 0, visible: record.visibility !== 'hidden', status: statusToDb(record.status) } }),
-      this.db.servicePage.update({ where: { id: page.id }, data: { content: asJson(record), status: statusToDb(record.status), version: { increment: 1 } } }),
-    ])
-    return record
+    const payload = servicePagePayload(page.content)
+    const draft = { ...record, status: 'draft' as const, updatedAt: new Date().toISOString() }
+    await this.db.servicePage.update({ where: { id: page.id }, data: { content: asJson({ ...payload, draft }) } })
+    return draft
+  }
+
+  async publishService(slug: string) {
+    return this.db.$transaction(async (tx) => {
+      const page = await tx.servicePage.findFirst({ where: { service: { slug }, locationId: null }, include: { service: true } })
+      if (!page) throw new Error(`Service page not found: ${slug}`)
+      const payload = servicePagePayload(page.content)
+      if (!payload.draft) throw new Error('Save a draft before publishing changes.')
+      validateServiceIdentity(payload.draft)
+      const published = { ...payload.draft, status: 'published' as const, updatedAt: new Date().toISOString() }
+      const nextVersion = page.version + 1
+      await tx.contentRevision.create({ data: { id: crypto.randomUUID(), servicePageId: page.id, version: nextVersion, content: asJson(payload.published), changedBy: 'admin', changeType: 'PUBLISH', status: 'PUBLISHED' } })
+      await tx.service.update({ where: { id: page.serviceId }, data: { name: published.serviceName, category: published.quickInfo.serviceType, description: published.shortDescription, icon: published.icon || '', displayOrder: published.displayOrder || 0, visible: published.visibility !== 'hidden', status: 'PUBLISHED' } })
+      await tx.servicePage.update({ where: { id: page.id }, data: { content: asJson({ published }), status: 'PUBLISHED', version: nextVersion, publishedAt: new Date() } })
+      return published
+    })
+  }
+
+  async listServiceRevisions(slug: string) {
+    const page = await this.db.servicePage.findFirst({ where: { service: { slug }, locationId: null }, select: { id: true } })
+    if (!page) throw new Error(`Service page not found: ${slug}`)
+    return this.db.contentRevision.findMany({ where: { servicePageId: page.id }, orderBy: { version: 'desc' } })
+  }
+
+  async restoreServiceRevision(slug: string, revisionId: string) {
+    return this.db.$transaction(async (tx) => {
+      const page = await tx.servicePage.findFirst({ where: { service: { slug }, locationId: null }, include: { service: true } })
+      if (!page) throw new Error(`Service page not found: ${slug}`)
+      const revision = await tx.contentRevision.findFirst({ where: { id: revisionId, servicePageId: page.id } })
+      if (!revision || !revision.content || typeof revision.content !== 'object') throw new Error('Revision not found.')
+      const restored = revision.content as unknown as ServiceBuilderRecord
+      validateServiceIdentity(restored)
+      const current = servicePagePayload(page.content).published
+      const nextVersion = page.version + 1
+      await tx.contentRevision.create({ data: { id: crypto.randomUUID(), servicePageId: page.id, version: nextVersion, content: asJson(current), changedBy: 'admin', changeType: 'RESTORE', status: 'PUBLISHED' } })
+      await tx.servicePage.update({ where: { id: page.id }, data: { content: asJson({ published: restored }), status: 'PUBLISHED', version: nextVersion, publishedAt: new Date() } })
+      return restored
+    })
   }
 
   async deleteService(slug: string) { await this.db.service.delete({ where: { slug } }) }
@@ -188,6 +241,94 @@ export class DatabaseContentRepository implements ContentRepository, ScalableCon
   }
 
   async cancelGenerationJobs(ids: string[]) { const result = await this.db.aiGenerationJob.updateMany({ where: { id: { in: ids }, status: { in: ['QUEUED', 'PROCESSING'] } }, data: { status: 'CANCELLED' } }); return result.count }
+}
+
+const blogStoreFile = path.join(process.cwd(), '.local', 'blog-posts.json')
+
+type BlogRecord = {
+  id: string
+  slug: string
+  title: string
+  content: unknown
+  status: 'draft' | 'published' | 'unpublished'
+  publishedAt?: string | null
+  updatedAt?: string
+  createdAt?: string
+}
+
+async function readBlogStore(): Promise<Record<string, BlogRecord>> {
+  try {
+    const raw = JSON.parse(await readFile(blogStoreFile, 'utf8'))
+    return raw && typeof raw === 'object' ? (raw as Record<string, BlogRecord>) : {}
+  } catch {
+    return {}
+  }
+}
+
+async function writeBlogStore(records: Record<string, BlogRecord>) {
+  await mkdir(path.dirname(blogStoreFile), { recursive: true })
+  await writeFile(blogStoreFile, JSON.stringify(records, null, 2), 'utf8')
+}
+
+export async function listPublishedBlogs() {
+  if (process.env.DATABASE_URL) {
+    const rows = await createProductionRepository().listBlogs()
+    return rows.filter((row) => String(row.status).toLowerCase() === 'published').map((row) => ({
+      id: row.id,
+      slug: row.slug,
+      title: row.title,
+      content: row.content,
+      status: 'published' as const,
+      publishedAt: row.publishedAt ? row.publishedAt.toISOString() : null,
+      updatedAt: row.updatedAt.toISOString(),
+      createdAt: row.createdAt.toISOString(),
+    }))
+  }
+
+  if (process.env.NODE_ENV !== 'development') return []
+  const store = await readBlogStore()
+  return Object.values(store)
+    .filter((row) => String(row.status).toLowerCase() === 'published')
+    .sort((a, b) => new Date(b.updatedAt || b.publishedAt || 0).getTime() - new Date(a.updatedAt || a.publishedAt || 0).getTime())
+}
+
+export async function getBlogBySlug(slug: string) {
+  if (process.env.DATABASE_URL) {
+    const rows = await createProductionRepository().listBlogs()
+    return rows.find((row) => row.slug === slug) || null
+  }
+
+  if (process.env.NODE_ENV !== 'development') return null
+  const store = await readBlogStore()
+  const entry = Object.values(store).find((row) => row.slug === slug)
+  return entry || null
+}
+
+export async function saveBlogServer(input: { id?: string; slug: string; title: string; content: unknown; status?: 'draft' | 'published' | 'unpublished' }) {
+  if (process.env.DATABASE_URL) return createProductionRepository().saveBlog(input)
+  if (process.env.NODE_ENV !== 'development') throw new Error('DATABASE_URL is required for production blog storage.')
+
+  const store = await readBlogStore()
+  const id = input.id || crypto.randomUUID()
+  const status = input.status || 'draft'
+  const record: BlogRecord = {
+    id,
+    slug: input.slug,
+    title: input.title,
+    content: input.content,
+    status,
+    publishedAt: status === 'published' ? new Date().toISOString() : null,
+    updatedAt: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+  }
+
+  const next = { ...store }
+  for (const [key, value] of Object.entries(next)) {
+    if (value.slug === record.slug && key !== id) delete next[key]
+  }
+  next[id] = record
+  await writeBlogStore(next)
+  return record
 }
 
 export function createProductionRepository() {

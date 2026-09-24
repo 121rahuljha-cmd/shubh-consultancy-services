@@ -18,10 +18,11 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
-import { contact, services } from '@/lib/site-data'
+import { contact, getVisibleContactNumbers, services } from '@/lib/site-data'
 import { getRelatedServices } from '@/lib/service-clusters'
 import { getServerServiceBuilderRecord } from '@/lib/server-services'
 import { ServiceBuilderRenderer } from '@/components/service-builder-renderer'
+import { PublicLinkingSection } from '@/components/public-linking-section'
 
 export const dynamic = 'force-dynamic'
 
@@ -70,9 +71,10 @@ export default async function ServicePage({
 }) {
   const { slug } = await params
   const result = await getServerServiceBuilderRecord(slug)
+  const visiblePhones = getVisibleContactNumbers()
   if (result.source === 'unavailable') return <main className="min-h-[60vh] bg-surface px-4 py-20"><div className="mx-auto max-w-3xl rounded-xl border border-amber-200 bg-amber-50 p-6"><p className="eyebrow">Service unavailable</p><h1 className="mt-2 font-serif text-3xl font-bold text-navy">Production service data is not configured</h1><p className="mt-3 text-sm text-amber-900">{result.error}</p></div></main>
   const builderRecord = result.record
-  if (builderRecord) return <ServiceBuilderRenderer record={builderRecord} />
+  if (builderRecord) return <ServiceBuilderRenderer record={builderRecord} linking={await import('@/lib/public-linking').then(({ getPublicLinkSets }) => getPublicLinkSets(`public-service-${slug}`))} />
   const service = services.find((s) => s.slug === slug)
 
   if (!service) notFound()
@@ -372,24 +374,21 @@ export default async function ServicePage({
               business — at no cost.
             </p>
             <div className="mt-4 flex flex-col gap-2.5">
-              <a
-                href={contact.phonePrimaryHref}
-                className="flex items-center gap-2 text-sm font-medium text-accent hover:underline"
-              >
-                <Phone className="size-4" aria-hidden="true" />
-                {contact.phonePrimary}
-              </a>
-              <a
-                href={contact.phoneSecondaryHref}
-                className="flex items-center gap-2 text-sm font-medium text-accent hover:underline"
-              >
-                <Phone className="size-4" aria-hidden="true" />
-                {contact.phoneSecondary}
-              </a>
+              {visiblePhones.map((phone) => (
+                <a
+                  key={`${phone.formatted}-${phone.href}`}
+                  href={phone.href}
+                  className="flex items-center gap-2 text-sm font-medium text-accent hover:underline"
+                >
+                  <Phone className="size-4" aria-hidden="true" />
+                  {phone.formatted}
+                </a>
+              ))}
             </div>
           </section>
         </aside>
       </div>
+      <PublicLinkingSection pageId={`public-service-${service.slug}`} />
     </>
   )
 }

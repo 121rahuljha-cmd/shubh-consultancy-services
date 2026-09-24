@@ -1,16 +1,36 @@
 export const contact = {
-  phonePrimary: '+91-7011340730',
-  phonePrimaryHref: 'tel:+917011340730',
-  phoneSecondary: '+91-9873207632',
-  phoneSecondaryHref: 'tel:+919873207632',
-  email: 'marketing.shubhcs@gmail.com',
-  emailHref: 'mailto:marketing.shubhcs@gmail.com',
+  phonePrimary: '+91-9873207632',
+  phonePrimaryHref: 'tel:+919873207632',
+  phoneSecondary: '+91-7011340730',
+  phoneSecondaryHref: 'tel:+917011340730',
+  email: 'info@shubhconsultancyservices.com',
+  emailHref: 'mailto:info@shubhconsultancyservices.com',
   whatsappHref:
-    'https://wa.me/917011340730?text=Hi%20Shubh%20Consultancy%20Services%2C%20I%20would%20like%20to%20enquire%20about%20your%20services.',
+    'https://wa.me/919873207632?text=Hi%20Shubh%20Consultancy%20Services%2C%20I%20would%20like%20to%20enquire%20about%20your%20services.',
   address:
     'S-20/1, Ground Floor, Shalimar Garden Extension 1, Ghaziabad, Uttar Pradesh 201005',
   hours: 'Mon – Sat, 10:00 AM – 7:00 PM',
 } as const
+
+export function getVisibleContactNumbers() {
+  const numbers: Array<{ formatted: string; href: string }> = []
+
+  const append = (formatted?: string, href?: string) => {
+    if (!formatted || !href) return
+    const cleanFormatted = formatted.trim()
+    const cleanHref = href.trim()
+    if (!cleanFormatted || !cleanHref) return
+    const duplicate = numbers.some(
+      (item) => item.formatted === cleanFormatted && item.href === cleanHref,
+    )
+    if (!duplicate) numbers.push({ formatted: cleanFormatted, href: cleanHref })
+  }
+
+  append(contact.phonePrimary, contact.phonePrimaryHref)
+  append(contact.phoneSecondary, contact.phoneSecondaryHref)
+
+  return numbers
+}
 
 export type ProcessStep = { title: string; description: string }
 export type Faq = { question: string; answer: string }
@@ -1394,8 +1414,8 @@ export const testimonials = [
 ]
 
 export const stats = [
-  { value: '2,500+', label: 'Clients served across India' },
-  { value: '15+', label: 'Years of combined experience' },
-  { value: '4.6', label: 'Average client rating' },
-  { value: '20+', label: 'Services under one roof' },
+  { value: '9,000+', label: 'Clients served across India' },
+  { value: '10+', label: 'Years of experience' },
+  { value: '4.9', label: 'Average client rating' },
+  { value: '200+', label: 'Services under one roof' },
 ]

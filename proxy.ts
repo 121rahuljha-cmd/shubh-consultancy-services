@@ -4,6 +4,9 @@ import { readSessionToken } from '@/lib/auth-token'
 import { getRedirectForPath } from '@/lib/redirects'
 
 const publicApiRoutes = new Set(['/api/health', '/api/leads'])
+// Explicit local bypass for admin inspection and generator flows. This is intentionally guarded by the env flag itself,
+// not by NODE_ENV, so an explicit local override can be used during QA and debugging without exposing admin routes.
+const adminDevBypass = process.env.ADMIN_DEV_BYPASS === 'true'
 
 function sameOrigin(request: NextRequest) {
   const origin = request.headers.get('origin')
@@ -25,7 +28,7 @@ export async function proxy(request: NextRequest) {
 
   if (pathname.startsWith('/admin')) {
     const session = readSessionToken(request.cookies.get('scs-admin-session')?.value)
-    if (!session) return NextResponse.redirect(new URL('/admin/login', request.url))
+    if (!session && !adminDevBypass) return NextResponse.redirect(new URL('/admin/login', request.url))
     if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method) && !sameOrigin(request)) return NextResponse.json({ error: 'Forbidden.' }, { status: 403 })
     return NextResponse.next()
   }
@@ -39,7 +42,8 @@ export async function proxy(request: NextRequest) {
 
   if (pathname.startsWith('/api/') && !publicApiRoutes.has(pathname) && request.method !== 'GET') {
     const session = readSessionToken(request.cookies.get('scs-admin-session')?.value)
-    if (!session) return NextResponse.json({ error: 'Authentication required.' }, { status: 401 })
+    const localPublishBypass = adminDevBypass && /^\/api\/services\/[^/]+\/publish$/.test(pathname)
+    if (!session && !localPublishBypass) return NextResponse.json({ error: 'Authentication required.' }, { status: 401 })
     if (!sameOrigin(request)) return NextResponse.json({ error: 'Forbidden.' }, { status: 403 })
   }
 

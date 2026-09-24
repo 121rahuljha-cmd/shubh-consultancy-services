@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Mail, MapPin, Phone, Clock } from 'lucide-react'
-import { contact, navGroups } from '@/lib/site-data'
+import { contact, getVisibleContactNumbers, navGroups } from '@/lib/site-data'
 
 const legalLinks = [
   { label: 'Privacy Policy', href: '/privacy-policy' },
@@ -16,6 +16,7 @@ export function SiteFooter() {
     navGroups.find((g) => g.label === 'GST'),
     navGroups.find((g) => g.label === 'IT Services'),
   ].filter(Boolean) as typeof navGroups
+  const visiblePhones = getVisibleContactNumbers()
 
   return (
     <footer className="bg-navy-deep text-white/70">
@@ -48,18 +49,15 @@ export function SiteFooter() {
                 aria-hidden="true"
               />
               <span className="flex flex-col">
-                <a
-                  href={contact.phonePrimaryHref}
-                  className="font-semibold text-white transition-colors hover:text-brand"
-                >
-                  {contact.phonePrimary}
-                </a>
-                <a
-                  href={contact.phoneSecondaryHref}
-                  className="font-semibold text-white transition-colors hover:text-brand"
-                >
-                  {contact.phoneSecondary}
-                </a>
+                {visiblePhones.map((phone, index) => (
+                  <a
+                    key={`${phone.formatted}-${phone.href}`}
+                    href={phone.href}
+                    className={index === 0 ? 'font-semibold text-white transition-colors hover:text-brand' : 'font-semibold text-white transition-colors hover:text-brand'}
+                  >
+                    {phone.formatted}
+                  </a>
+                ))}
               </span>
             </li>
             <li className="flex gap-3">

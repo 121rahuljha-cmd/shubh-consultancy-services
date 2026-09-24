@@ -26,7 +26,7 @@ export function Hero() {
       <div className="container-page relative grid items-center gap-12 py-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:py-20">
         <div className="flex flex-col items-start gap-6">
           <span className="inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.12em] text-brand">
-            Trusted since 2015 &middot; Ghaziabad
+            Trusted since 2015 &middot; Pan India Service
           </span>
 
           <h1 className="max-w-2xl font-heading text-4xl font-extrabold leading-[1.08] text-balance text-white sm:text-5xl lg:text-[3.4rem]">
@@ -38,7 +38,7 @@ export function Hero() {
           <p className="max-w-xl text-base leading-relaxed text-white/70">
             From FSSAI licences and GST registration to company incorporation,
             trademarks, ROC filings and digital marketing — Shubh Consultancy
-            Services runs the paperwork end to end for over 2,500 businesses
+              Services runs the paperwork end to end for 9,000+ businesses
             across India.
           </p>
 

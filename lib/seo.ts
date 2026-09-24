@@ -1,6 +1,9 @@
+const productionSiteOrigin = 'https://shubhconsultancyservices.com'
+
 export const productionOrigin = () => {
-  const host = process.env.PUBLIC_SITE_URL || process.env.APP_URL || 'https://example.com'
-  return host.replace(/\/$/, '')
+  const configured = (process.env.PUBLIC_SITE_URL || process.env.APP_URL || process.env.NEXT_PUBLIC_SITE_URL || '').trim().replace(/^=+/, '')
+  if (!configured || /^https?:\/\/(localhost|127\.0\.0\.1)(?::\d+)?$/i.test(configured)) return productionSiteOrigin
+  return configured.replace(/\/$/, '')
 }
 
 export const normalizeCanonicalPath = (value: string) => {

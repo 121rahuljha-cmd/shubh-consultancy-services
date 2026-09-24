@@ -84,7 +84,7 @@ export default function RootLayout({
         <main id="main">{children}</main>
         <SiteFooter />
         <FloatingContact />
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+          {process.env.VERCEL === '1' ? <Analytics /> : null}
       </body>
     </html>
   )
