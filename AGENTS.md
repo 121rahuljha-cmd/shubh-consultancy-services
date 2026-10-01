@@ -1,9 +1,33 @@
-<!-- BEGIN:nextjs-agent-rules -->
+# Shubh Consultancy Services - Agent Configuration
 
-# This is NOT the Next.js you know
+## Overview
+This file contains configuration and guidelines for AI agents working on the Shubh Consultancy Services project.
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+## Project Information
+- **Repository**: shubh-consultancy-services
+- **Primary Languages**: HTML (81.3%), TypeScript (18.2%), Other (0.5%)
+- **Type**: Next.js Web Application
 
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+## Agent Guidelines
 
-<!-- END:nextjs-agent-rules -->
+### Code Standards
+- Follow TypeScript best practices
+- Maintain HTML semantic structure
+- Use component-based architecture
+- Keep CSS organized and modular
+
+### Development Workflow
+1. Create feature branches for new work
+2. Write clear commit messages
+3. Test changes before pushing
+4. Update documentation as needed
+
+### Important Notes
+- This is a Next.js project with specific conventions
+- Refer to Next.js documentation for framework-specific guidance
+- Maintain consistency with existing codebase
+
+## Resources
+- Next.js Docs: https://nextjs.org/docs
+- Project Structure: See `src/` directory
+- Configuration: Check `next.config.js` and `tsconfig.json`
