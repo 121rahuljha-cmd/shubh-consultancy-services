@@ -3,11 +3,19 @@ import Link from 'next/link'
 
 import { ServiceInventoryDirectory } from '@/components/service-inventory-directory'
 import { inventoryCategories, inventory } from '@/lib/service-inventory'
+import { getPublicRouteMetadata } from '@/lib/public-route-metadata'
 
-export const metadata: Metadata = {
-  title: 'All Services',
-  description:
-    'Explore the unified Shubh Consultancy service inventory across business registration, tax, licensing, compliance and professional services.',
+export async function generateMetadata(): Promise<Metadata> {
+  const override = await getPublicRouteMetadata('services')
+  return {
+    title: override.title || 'All Services',
+    description: override.description || 'Explore the unified Shubh Consultancy service inventory across business registration, tax, licensing, compliance and professional services.',
+    alternates: override.canonical ? { canonical: override.canonical } : undefined,
+    robots: override.robotsIndex === undefined ? undefined : {
+      index: override.robotsIndex,
+      follow: override.robotsFollow ?? true,
+    },
+  }
 }
 
 export default function ServicesIndexPage() {

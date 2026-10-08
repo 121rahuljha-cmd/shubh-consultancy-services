@@ -12,11 +12,11 @@ import {
   Phone,
   Plus,
   X,
-  ArrowRight,
 } from 'lucide-react'
 import { contact, getVisibleContactNumbers } from '@/lib/site-data'
 import { getPublicServiceGroups, getSavedPublicServiceGroups, type PublicServiceGroup } from '@/lib/public-services'
 import { cn } from '@/lib/utils'
+import { HeaderDropdownOverlay } from '@/components/header-dropdown-overlay'
 
 function Logo() {
   return (
@@ -110,7 +110,6 @@ export function SiteHeader() {
           <nav
             className="relative hidden h-full items-center overflow-visible lg:flex"
             aria-label="Main navigation"
-            onMouseLeave={() => setOpenGroup(null)}
           >
             {navGroups.map((group) => {
               const isOpen = openGroup === group.label
@@ -140,44 +139,11 @@ export function SiteHeader() {
                   </button>
 
                   {isOpen && (
-                    <div className="absolute left-1/2 top-full z-50 w-[min(78vw,1200px)] -translate-x-1/2 border-b border-border bg-background shadow-xl">
-                      <div className="container-page grid gap-8 py-8 lg:grid-cols-[260px_1fr]">
-                        <div className="flex flex-col gap-3 border-r border-border pr-8">
-                          <span className="eyebrow">{group.label}</span>
-                          <p className="text-sm leading-relaxed text-muted-foreground">
-                            {group.blurb}
-                          </p>
-                          <a
-                            href={contact.phonePrimaryHref}
-                            className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-brand hover:underline"
-                          >
-                            Talk to a specialist
-                            <ArrowRight className="size-3.5" aria-hidden="true" />
-                          </a>
-                        </div>
-                        <ul className="grid gap-x-6 gap-y-1 sm:grid-cols-2">
-                          {group.items.map((item) => (
-                            <li key={item.href}>
-                              <Link
-                                href={item.href}
-                                className="group flex flex-col gap-0.5 rounded-md px-3 py-2.5 transition-colors hover:bg-brand-tint"
-                              >
-                                <span className="flex items-center gap-1.5 text-sm font-semibold text-navy group-hover:text-brand">
-                                  {item.navLabel}
-                                  <ArrowRight
-                                    className="size-3.5 -translate-x-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100"
-                                    aria-hidden="true"
-                                  />
-                                </span>
-                                <span className="text-xs leading-relaxed text-muted-foreground">
-                                  {item.description}
-                                </span>
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
+                    <HeaderDropdownOverlay
+                      group={group}
+                      isOpen={isOpen}
+                      onClose={() => setOpenGroup(null)}
+                    />
                   )}
                 </div>
               )

@@ -11,6 +11,10 @@ enum CmsStatus {
   DRAFT
   PUBLISHED
   UNPUBLISHED
+  PENDING_APPROVAL
+  APPROVED
+  CHANGES_REQUESTED
+  ARCHIVED
 }
 
 enum AdminRole {
@@ -191,15 +195,44 @@ model ContentPlan {
 }
 
 model BlogPost {
-  id          String       @id @default(cuid())
-  slug        String       @unique
-  title       String
-  content     Json
-  status      CmsStatus    @default(DRAFT)
+  id              String       @id @default(cuid())
+  slug            String       @unique
+  title           String
+  excerpt         String?
+  author          String?
+  category        String?
+  tags            Json?        @default("[]")
+  featuredImage   Json?        @default("{}")
+  content         Json
+  seo             Json?        @default("{}")
+  sections        Json?        @default("[]")
+  status          CmsStatus    @default(DRAFT)
+  version         Int          @default(1)
+  publishedAt     DateTime?
+  lastPublishedAt DateTime?
+  archivedAt      DateTime?
+  approvalReason  String?
+  rejectionReason String?
+  createdBy       String?
+  updatedBy       String?
+  publishedBy     String?
+  approvedBy      String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  revisions       BlogRevision[]
+
+  @@index([status, updatedAt])
+  @@index([category, status])
+}
+
+model PublicRouteOverride {
+  routeKey   String      @id
+  status     CmsStatus   @default(DRAFT)
+  revision   Int         @default(1)
+  content    Json
   publishedAt DateTime?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  revisions   BlogRevision[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 
   @@index([status, updatedAt])
 }
@@ -211,6 +244,7 @@ model BlogRevision {
   content    Json
   changedBy  String
   status     CmsStatus
+  changeType String     @default("EDIT")
   createdAt  DateTime   @default(now())
   blogPost   BlogPost   @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
 

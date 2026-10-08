@@ -5,10 +5,19 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { contact, getVisibleContactNumbers } from '@/lib/site-data'
 import { ContactForm } from '@/components/contact-form'
+import { getPublicRouteMetadata } from '@/lib/public-route-metadata'
 
-export const metadata: Metadata = {
-  title: 'Contact Us',
-  description: `Talk to Shubh Consultancy Services. Call ${contact.phonePrimary} or visit our office in Shalimar Garden Extension, Ghaziabad.`,
+export async function generateMetadata(): Promise<Metadata> {
+  const override = await getPublicRouteMetadata('contact')
+  return {
+    title: override.title || 'Contact Us',
+    description: override.description || `Talk to Shubh Consultancy Services. Call ${contact.phonePrimary} or visit our office in Shalimar Garden Extension, Ghaziabad.`,
+    alternates: override.canonical ? { canonical: override.canonical } : undefined,
+    robots: override.robotsIndex === undefined ? undefined : {
+      index: override.robotsIndex,
+      follow: override.robotsFollow ?? true,
+    },
+  }
 }
 
 export default function ContactPage() {
