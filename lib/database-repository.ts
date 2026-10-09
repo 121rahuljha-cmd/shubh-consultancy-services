@@ -51,11 +51,18 @@ export class DatabaseContentRepository implements ContentRepository, ScalableCon
   }
 
   async createService(record: ServiceBuilderRecord) {
-    await this.db.$transaction(async (tx) => {
-      const service = await tx.service.create({ data: { id: record.id, name: record.serviceName, slug: record.serviceSlug, category: record.quickInfo.serviceType, description: record.shortDescription, icon: record.icon || '', displayOrder: record.displayOrder || 0, visible: record.visibility !== 'hidden', status: statusToDb(record.status) } })
-      await tx.servicePage.create({ data: { id: `page-${record.serviceSlug}`, serviceId: service.id, content: asJson(record), status: statusToDb(record.status), version: 1 } })
+    validateServiceIdentity(record)
+    return this.db.$transaction(async (tx) => {
+      const existingService = await tx.service.findUnique({ where: { slug: record.serviceSlug } })
+      const service = existingService || await tx.service.create({ data: { id: record.id, name: record.serviceName, slug: record.serviceSlug, category: record.quickInfo.serviceType, description: record.shortDescription, icon: record.icon || '', displayOrder: record.displayOrder || 0, visible: record.visibility !== 'hidden', status: statusToDb(record.status) } })
+      const existingPage = await tx.servicePage.findFirst({ where: { serviceId: service.id, locationId: null }, include: { service: true } })
+      if (existingPage) {
+        // Never replace existing content during a create retry; return the current database draft/published record.
+        return contentOf(existingPage, true)
+      }
+      await tx.servicePage.create({ data: { id: `page-${record.serviceSlug}`, serviceId: service.id, content: asJson({ published: { ...record, status: 'draft' as const }, draft: { ...record, status: 'draft' as const } }), status: 'DRAFT', version: 1 } })
+      return { ...record, id: service.id, status: 'draft' as const }
     })
-    return record
   }
 
   async saveService(record: ServiceBuilderRecord) { await this.updateService(record) }
