@@ -4,9 +4,8 @@ import { readSessionToken } from '@/lib/auth-token'
 import { getRedirectForPath } from '@/lib/redirects'
 
 const publicApiRoutes = new Set(['/api/health', '/api/leads'])
-// Explicit local bypass for admin inspection and generator flows. This is intentionally guarded by the env flag itself,
-// not by NODE_ENV, so an explicit local override can be used during QA and debugging without exposing admin routes.
-const adminDevBypass = process.env.ADMIN_DEV_BYPASS === 'true'
+// Development-only bypass for local QA. Never honor this flag in production, even if it is accidentally configured.
+const adminDevBypass = process.env.NODE_ENV === 'development' && process.env.ADMIN_DEV_BYPASS === 'true'
 
 function sameOrigin(request: NextRequest) {
   const origin = request.headers.get('origin')
