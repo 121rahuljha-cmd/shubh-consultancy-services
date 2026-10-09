@@ -117,9 +117,9 @@ export type AiProviderStatus = { mode: AiProviderMode; label: string; detail: st
 
 export function getAiProviderStatus(): AiProviderStatus {
   return {
-    mode: 'mock',
-    label: 'Mock mode',
-    detail: 'Demo suggestions are active until a server-side AI provider is configured.',
+    mode: 'unavailable',
+    label: 'Checking provider',
+    detail: 'Checking server-side AI configuration. Please wait before generating content.',
   }
 }
 
