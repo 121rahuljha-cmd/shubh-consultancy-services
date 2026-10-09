@@ -41,7 +41,7 @@ export function AiAssistant({ record, onAccept, onCreateCmsDraft }: { record: Se
     setSuggestion(null)
     setNotice('')
     setLastAction(action)
-    try { setSuggestion(providerStatus.mode === 'real' ? await generateWithServerAi(action, context, section) : await getAiProvider().generate(action, context, section)) } catch (error) { setNotice(error instanceof Error ? error.message : 'AI provider failure.') } finally { setLoading(false) }
+    try { if (providerStatus.mode === 'unavailable') throw new Error(providerStatus.detail || 'AI provider is not ready. Check its configuration and try again.'); const result = providerStatus.mode === 'real' ? await generateWithServerAi(action, context, section) : await getAiProvider().generate(action, context, section); setSuggestion(result) } catch (error) { setNotice(error instanceof Error ? error.message : 'AI provider failure.') } finally { setLoading(false) }
   }
 
   return <section className="rounded-xl border border-brand/20 bg-brand-tint p-5 md:p-6">
