@@ -8,17 +8,20 @@ export type AiSuggestion = { action: AiAction; summary: string; changes: Partial
 export interface AiProvider { readonly name: string; generate(action: AiAction, context: AiContext, section?: string): Promise<AiSuggestion> }
 export interface SectionAiProvider { readonly name: string; generateSection(context: SectionAiContext): Promise<CmsSection> }
 export function getAiProvider(): AiProvider { return mockAiProvider }
-export async function getAiProviderStatusFromServer(): Promise<AiProviderStatus> {
+export async function getAiProviderStatusFromServer(selectedProvider = 'openai'): Promise<AiProviderStatus> {
 	try {
 		const response = await fetch('/api/ai/generate', { cache: 'no-store' })
 		if (!response.ok) return { mode: 'unavailable', label: 'Unavailable', detail: 'AI provider status could not be loaded.' }
-		const result = await response.json() as { provider?: string; configured?: boolean; model?: string }
-		if (result.provider === 'openai') return result.configured ? { mode: 'real', label: 'OpenAI · Connected', detail: `Server-side OpenAI provider is ready (${result.model || 'configured model'}).` } : { mode: 'unavailable', label: 'OpenAI · Not Configured', detail: 'OpenAI API key is not configured.' }
-		return { mode: 'mock', label: 'Mock', detail: 'Mock provider is active. No external AI request will be made.' }
+		const result = await response.json() as { providers?: Array<{provider: string; configured: boolean; model: string}> }
+		const provider = result.providers?.find((item) => item.provider === selectedProvider)
+		const labels: Record<string, string> = { openai: 'OpenAI', claude: 'Claude', gemini: 'Gemini' }
+		const label = labels[selectedProvider] || selectedProvider
+		if (!provider) return { mode: 'unavailable', label: `${label} · Unavailable`, detail: 'Provider status could not be loaded.' }
+		return provider.configured ? { mode: 'real', label: `${label} · Connected`, detail: `${label} is configured (${provider.model}).` } : { mode: 'unavailable', label: `${label} · Not Configured`, detail: `Add the ${label} API key in server environment variables.` }
 	} catch { return { mode: 'unavailable', label: 'Unavailable', detail: 'AI provider status could not be loaded.' } }
 }
-export async function generateWithServerAi(action: AiAction, context: AiContext, section?: string): Promise<AiSuggestion> {
-	const response = await fetch('/api/ai/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action, context, section }) })
+export async function generateWithServerAi(action: AiAction, context: AiContext, section?: string, options?: { provider?: string; prompt?: string; referenceUrls?: string[] }): Promise<AiSuggestion> {
+	const response = await fetch('/api/ai/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action, context, section, provider: options?.provider, prompt: options?.prompt, referenceUrls: options?.referenceUrls }) })
 	const result = await response.json() as AiSuggestion & { error?: string }
 	if (!response.ok) throw new Error(result.error || 'AI provider failure.')
 	return result
