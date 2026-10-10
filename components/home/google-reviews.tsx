@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react'
 
@@ -75,6 +76,11 @@ export function GoogleReviews() {
     )
   }
 
+  const visibleReviews = Array.from(
+    { length: Math.min(4, reviews.length) },
+    (_, offset) => reviews[(activeIndex + offset) % reviews.length],
+  )
+
   return (
     <section
       className="bg-white py-14 md:py-16"
@@ -103,33 +109,27 @@ export function GoogleReviews() {
 
         <div className="relative">
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {reviews.map((review, index) => {
-              const offset = (index - activeIndex + reviews.length) % reviews.length
-              const visible = offset < Math.min(4, reviews.length)
-              if (!visible) return null
-              return (
-                <article key={`${review.name}-${review.publishedAt}-${index}`} className="flex min-h-[220px] flex-col rounded-xl border border-[#dbe5f0] bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-                  <div className="flex items-start gap-3">
-                    {review.authorPhoto ? (
-                      // Google-provided reviewer image URL.
-                      <img src={review.authorPhoto} alt="" referrerPolicy="no-referrer" className="size-11 shrink-0 rounded-full object-cover" />
-                    ) : (
-                      <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#e8f0fe] text-lg font-semibold text-[#1a73e8]">{review.name.trim().charAt(0).toUpperCase() || 'G'}</span>
-                    )}
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-[#082b57]">{review.name}</p>
-                      <p className="mt-1 text-xs text-[#64748b]">{review.relativeTime}</p>
-                    </div>
-                    {review.authorUrl && <a href={review.authorUrl} target="_blank" rel="noreferrer" aria-label={`Google profile for ${review.name}`} className="text-lg text-[#7b91ae] hover:text-[#1677ff]">↗</a>}
+            {visibleReviews.map((review, index) => (
+              <article key={`${review.name}-${review.publishedAt}-${activeIndex}-${index}`} className="flex min-h-[220px] flex-col rounded-xl border border-[#dbe5f0] bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+                <div className="flex items-start gap-3">
+                  {review.authorPhoto ? (
+                    <Image src={review.authorPhoto} alt="" width={44} height={44} unoptimized referrerPolicy="no-referrer" className="size-11 shrink-0 rounded-full object-cover" />
+                  ) : (
+                    <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#e8f0fe] text-lg font-semibold text-[#1a73e8]">{review.name.trim().charAt(0).toUpperCase() || 'G'}</span>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-[#082b57]">{review.name}</p>
+                    <p className="mt-1 text-xs text-[#64748b]">{review.relativeTime}</p>
                   </div>
-                  <div className="mt-4 flex gap-0.5 text-[#fbbc04]" aria-label={`${review.rating} out of 5 stars`}>
-                    {Array.from({ length: 5 }, (_, i) => <Star key={i} className={`size-5 ${i < review.rating ? 'fill-current' : ''}`} strokeWidth={i < review.rating ? 0 : 1.5} />)}
-                  </div>
-                  <blockquote className="mt-3 flex-1 text-sm leading-5 text-[#52647f]">{review.text}</blockquote>
-                  <p className="mt-4 text-xs font-medium text-[#64748b]">Review via Google</p>
-                </article>
-              )
-            })}
+                  {review.authorUrl && <a href={review.authorUrl} target="_blank" rel="noreferrer" aria-label={`Google profile for ${review.name}`} className="text-lg text-[#7b91ae] hover:text-[#1677ff]">↗</a>}
+                </div>
+                <div className="mt-4 flex gap-0.5 text-[#fbbc04]" aria-label={`${review.rating} out of 5 stars`}>
+                  {Array.from({ length: 5 }, (_, i) => <Star key={i} className={`size-5 ${i < review.rating ? 'fill-current' : ''}`} strokeWidth={i < review.rating ? 0 : 1.5} />)}
+                </div>
+                <blockquote className="mt-3 flex-1 text-sm leading-5 text-[#52647f]">{review.text}</blockquote>
+                <p className="mt-4 text-xs font-medium text-[#64748b]">Review via Google</p>
+              </article>
+            ))}
           </div>
 
           {reviews.length > 1 && (
