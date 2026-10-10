@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { cmsPageFromAi } from '@/lib/ai/cms-integration'
 import { getAiProviderStatusFromServer, generateWithServerAi, type AiProviderStatus, type AiSuggestion } from '@/lib/ai/provider'
 import { contextFromRecord } from '@/lib/ai/prompts'
-import { mockAiProvider } from '@/lib/ai/mock-provider'
 import { getPages, saveCmsRevision, savePages, type CmsPage } from '@/lib/page-cms'
 import { saveSections, type CmsSection } from '@/lib/cms-sections'
 import { createBuilderRecord } from '@/lib/service-builder'
@@ -36,9 +35,9 @@ export function ContentCreator() {
   const generate = async () => {
     if (!topic.trim() && !rawNotes.trim()) { setNotice('Topic or raw content is required.'); return }
     setLoading(true); setNotice('');
-    const urls = referenceUrls.split(/\\r?\\n/).map((url) => url.trim()).filter(Boolean)
+    const urls = referenceUrls.split(/\r?\n/).map((url) => url.trim()).filter(Boolean)
     if (urls.length > 8) { setNotice('Maximum 8 reference URLs per generation.'); setLoading(false); return }
-    if (urls.some((url) => !/^https?:\\/\\//i.test(url))) { setNotice('Each reference URL must start with http:// or https://'); setLoading(false); return }
+    if (urls.some((url) => !/^https?:\/\//i.test(url))) { setNotice('Each reference URL must start with http:// or https://'); setLoading(false); return }
     if (status.mode !== 'real') { setNotice(status.detail); setLoading(false); return }
     const subject = topic.trim() || 'Raw content analysis'
     const record = createBuilderRecord(subject.toLowerCase().replace(/[^a-z0-9]+/g, '-'))
