@@ -3,12 +3,15 @@ import Link from 'next/link'
 
 import { listPublishedBlogs } from '@/lib/database-repository'
 
+
 export const metadata: Metadata = {
   title: 'Blog',
   description: 'Insights and guidance from Shubh Consultancy Services.',
   alternates: { canonical: '/blog' },
   robots: { index: true, follow: true },
 }
+
+export const dynamic = 'force-dynamic'
 
 export default async function BlogIndexPage() {
   const posts = await listPublishedBlogs()
