@@ -1,6 +1,5 @@
 import { CtaBand } from '@/components/home/cta-band'
 import { ClientPortfolio } from '@/components/client-portfolio'
-import { GoogleReviews } from '@/components/home/google-reviews'
 import { Hero } from '@/components/home/hero'
 import { HowItWorks } from '@/components/home/how-it-works'
 import { ServicesGrid } from '@/components/home/services-grid'
@@ -29,7 +28,6 @@ export default async function HomePage() {
       <Hero />
       <StatsStrip />
       <ClientPortfolio clients={clients} />
-      <GoogleReviews />
       <ServicesGrid />
       <HowItWorks />
       <WhyChooseUs />
