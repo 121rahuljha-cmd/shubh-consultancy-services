@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server'
 
 export const runtime = 'nodejs'
 
-const DEFAULT_PLACE_ID = 'ChIJkTi7COtYH44RWlrdu9MW2mY'
 const CACHE_SECONDS = 60 * 60 * 24 * 30
 
 type GoogleReview = {
@@ -28,11 +27,11 @@ type PlaceDetails = {
 
 export async function GET() {
   const apiKey = process.env.GOOGLE_PLACES_API_KEY
-  const placeId = process.env.GOOGLE_PLACE_ID || DEFAULT_PLACE_ID
+  const placeId = process.env.GOOGLE_PLACE_ID
 
-  if (!apiKey) {
+  if (!apiKey || !placeId) {
     return NextResponse.json(
-      { configured: false, reviews: [], error: 'Google reviews are not configured yet.' },
+      { configured: false, reviews: [], error: 'Set GOOGLE_PLACES_API_KEY and the verified GOOGLE_PLACE_ID in server environment variables.' },
       { status: 503, headers: { 'Cache-Control': 'no-store' } },
     )
   }
