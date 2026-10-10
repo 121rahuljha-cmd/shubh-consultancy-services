@@ -2,7 +2,6 @@
 
 import { useLayoutEffect, useState } from 'react'
 import { ArrowRight } from 'lucide-react'
-import { contact } from '@/lib/site-data'
 import type { PublicServiceGroup } from '@/lib/public-services'
 
 type HeaderDropdownOverlayProps = {
@@ -46,37 +45,22 @@ export function HeaderDropdownOverlay({
       role="group"
       aria-label={`${group.label} menu`}
     >
-      <div className="container-page grid gap-8 py-8 lg:grid-cols-[260px_1fr]">
-        <div className="flex flex-col gap-3 border-r border-border pr-8">
-          <span className="eyebrow">{group.label}</span>
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            {group.blurb}
-          </p>
-          <a
-            href={contact.phonePrimaryHref}
-            className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-brand hover:underline"
-          >
-            Talk to a specialist
-            <ArrowRight className="size-3.5" aria-hidden="true" />
-          </a>
-        </div>
-        <ul className="grid gap-x-6 gap-y-1 sm:grid-cols-2">
+      <div className="container-page py-7">
+        <h2 className="mb-5 font-heading text-2xl font-bold text-[#2b5d8a]">
+          {group.label}
+        </h2>
+        <ul className="grid gap-x-8 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
           {group.items.map((item) => (
             <li key={item.href}>
               <a
                 href={item.href}
-                className="group flex flex-col gap-0.5 rounded-md px-3 py-2.5 transition-colors hover:bg-brand-tint"
+                className="group flex min-h-11 items-center justify-between gap-3 rounded-md px-3 py-2.5 text-base font-medium text-navy transition-colors hover:bg-brand-tint hover:text-brand"
               >
-                <span className="flex items-center gap-1.5 text-sm font-semibold text-navy group-hover:text-brand">
-                  {item.navLabel}
-                  <ArrowRight
-                    className="size-3.5 -translate-x-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100"
-                    aria-hidden="true"
-                  />
-                </span>
-                <span className="text-xs leading-relaxed text-muted-foreground">
-                  {item.description}
-                </span>
+                <span>{item.navLabel}</span>
+                <ArrowRight
+                  className="size-3.5 shrink-0 -translate-x-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100"
+                  aria-hidden="true"
+                />
               </a>
             </li>
           ))}
