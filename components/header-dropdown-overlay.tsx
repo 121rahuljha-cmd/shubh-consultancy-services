@@ -49,7 +49,7 @@ export function HeaderDropdownOverlay({
         <h2 className="mb-5 font-heading text-2xl font-bold text-[#2b5d8a]">
           {group.label}
         </h2>
-        <ul className="grid gap-x-8 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-x-8 gap-y-1 sm:grid-cols-2">
           {group.items.map((item) => (
             <li key={item.href}>
               <a
