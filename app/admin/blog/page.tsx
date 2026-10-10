@@ -1,5 +1,8 @@
 import type { Metadata } from 'next'
-import { ContentCreator } from '@/components/admin/content-creator'
+import { redirect } from 'next/navigation'
 
-export const metadata: Metadata = { title: 'Blog Creator', robots: { index: false, follow: false } }
-export default function BlogCreatorPage() { return <ContentCreator /> }
+export const metadata: Metadata = { title: 'Blog Management', robots: { index: false, follow: false } }
+
+export default function BlogPage() {
+  redirect('/admin/blogs')
+}
