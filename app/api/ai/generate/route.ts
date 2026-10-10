@@ -109,9 +109,11 @@ export function GET() {
 }
 
 function isPrivateIp(address: string): boolean {
-  if (address === '::1' || address.startsWith('fe80:') || address.startsWith('fc') || address.startsWith('fd')) return true
-  if (address.includes(':')) return false
-  const octets = address.split('.').map(Number)
+  const normalized = address.toLowerCase()
+  if (normalized === '::' || normalized === '::1' || normalized.startsWith('fe80:') || normalized.startsWith('fc') || normalized.startsWith('fd') || normalized.startsWith('ff')) return true
+  if (normalized.startsWith('::ffff:')) return isPrivateIp(normalized.slice('::ffff:'.length))
+  if (normalized.includes(':')) return false
+  const octets = normalized.split('.').map(Number)
   if (octets.length !== 4 || octets.some((part) => !Number.isInteger(part) || part < 0 || part > 255)) return true
   const [a, b] = octets
   return a === 10 || a === 127 || a === 0 || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 100 && b >= 64 && b <= 127) || a >= 224
