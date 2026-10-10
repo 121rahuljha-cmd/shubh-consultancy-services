@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { Mail, MapPin, Phone, Clock } from 'lucide-react'
+import { Mail, MapPin, Phone, Clock, Star } from 'lucide-react'
 import { contact, getVisibleContactNumbers, navGroups } from '@/lib/site-data'
 
 const legalLinks = [
@@ -8,6 +8,7 @@ const legalLinks = [
   { label: 'Terms & Conditions', href: '/terms-and-conditions' },
   { label: 'Refund Policy', href: '/refund-policy' },
   { label: 'Contact Us', href: '/contact' },
+  { label: 'Google Business Profile & Reviews', href: 'https://www.google.com/maps/search/?api=1&query=Shubh%20Consultancy%20Services&query_place_id=ChIJkTi7COtYH44RWlrdu9MW2mY', external: true },
 ]
 
 export function SiteFooter() {
@@ -107,15 +108,28 @@ export function SiteFooter() {
       {/* Secondary link row */}
       <div className="border-t border-white/10">
         <div className="container-page flex flex-wrap items-center gap-x-6 gap-y-2 py-4 text-sm">
-          {legalLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="transition-colors hover:text-brand"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {legalLinks.map((link) =>
+            'external' in link && link.external ? (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 transition-colors hover:text-brand"
+              >
+                <Star className="size-3.5" aria-hidden="true" />
+                {link.label}
+              </a>
+            ) : (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="transition-colors hover:text-brand"
+              >
+                {link.label}
+              </Link>
+            ),
+          )}
         </div>
       </div>
 
