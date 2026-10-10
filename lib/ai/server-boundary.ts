@@ -14,23 +14,22 @@ export type ServerAiConfig = {
   configured: boolean
 }
 
-export function getServerAiConfig(): ServerAiConfig {
-  const provider = process.env.AI_PROVIDER || 'mock'
+export type AiProviderId = 'openai' | 'claude' | 'gemini' | 'mock'
 
-  const configured =
-    provider === 'openai'
-      ? Boolean(process.env.OPENAI_API_KEY)
+export function getServerAiConfig(providerOverride?: string): ServerAiConfig {
+  const allowed: AiProviderId[] = ['openai', 'claude', 'gemini', 'mock']
+  const requested = providerOverride || process.env.AI_PROVIDER || 'mock'
+  const provider: AiProviderId = allowed.includes(requested as AiProviderId) ? requested as AiProviderId : 'mock'
+  const configured = provider === 'openai'
+    ? Boolean(process.env.OPENAI_API_KEY)
+    : provider === 'claude'
+      ? Boolean(process.env.ANTHROPIC_API_KEY)
       : provider === 'gemini'
         ? Boolean(process.env.GEMINI_API_KEY)
         : false
-
-  return {
-    provider,
-    model:
-      process.env.AI_MODEL ||
-      (provider === 'gemini' ? 'gemini-2.5-flash' : 'gpt-4o-mini'),
-    configured,
-  }
+  const defaultModel = provider === 'claude' ? 'claude-sonnet-4-20250514' : provider === 'gemini' ? 'gemini-2.5-flash' : 'gpt-4o-mini'
+  const model = provider === 'openai' ? process.env.OPENAI_MODEL : provider === 'claude' ? process.env.ANTHROPIC_MODEL : provider === 'gemini' ? process.env.GEMINI_MODEL : undefined
+  return { provider, model: model || process.env.AI_MODEL || defaultModel, configured }
 }
 
 const outputKind = (action: AiAction): AiOutputKind =>
@@ -88,9 +87,9 @@ export class OpenAiProvider implements AiProvider {
     context: AiContext,
     section?: string,
   ): Promise<AiSuggestion> {
-    const config = getServerAiConfig()
+    const config = getServerAiConfig('openai')
 
-    if (config.provider !== 'openai' || !process.env.OPENAI_API_KEY) {
+    if (!process.env.OPENAI_API_KEY) {
       throw new Error('OpenAI API key is not configured.')
     }
 
@@ -168,9 +167,9 @@ export class GeminiProvider implements AiProvider {
     context: AiContext,
     section?: string,
   ): Promise<AiSuggestion> {
-    const config = getServerAiConfig()
+    const config = getServerAiConfig('gemini')
 
-    if (config.provider !== 'gemini' || !process.env.GEMINI_API_KEY) {
+    if (!process.env.GEMINI_API_KEY) {
       throw new Error('Gemini API key is not configured.')
     }
 
@@ -228,6 +227,48 @@ export class GeminiProvider implements AiProvider {
       }
     } catch (error) {
       throw new Error(errorMessage(error, 'gemini'))
+    }
+  }
+}
+
+
+export class ClaudeProvider implements AiProvider {
+  readonly name = 'Claude server provider'
+
+  async generate(action: AiAction, context: AiContext, section?: string): Promise<AiSuggestion> {
+    const config = getServerAiConfig('claude')
+    const apiKey = process.env.ANTHROPIC_API_KEY
+    if (!apiKey) throw new Error('Claude API key is not configured.')
+    const prompt = promptFor(action, context, section)
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: config.model, max_tokens: 8192, temperature: 0.2, system: systemPrompt, messages: [{ role: 'user', content: prompt }] }),
+      signal: AbortSignal.timeout(30000),
+      cache: 'no-store',
+    })
+    if (!response.ok) {
+      if (response.status === 429) throw new Error('Claude rate limit reached. Please wait and try again.')
+      throw new Error(`Claude API request failed (HTTP ${response.status}). Check the API key, model access, and provider status.`)
+    }
+    const payload = await response.json() as { content?: Array<{ type?: string; text?: string }> }
+    const content = payload.content?.find((item) => item.type === 'text')?.text
+    if (!content) throw new Error('Claude returned an empty response.')
+    let parsed: unknown
+    try {
+      const cleaned = content.trim().replace(/^\`\`\`(?:json)?\s*/i, '').replace(/\s*\`\`\`$/, '')
+      parsed = JSON.parse(cleaned)
+    } catch { throw new Error('Claude returned invalid JSON.') }
+    const kind = outputKind(action)
+    const structured = validateAiOutput(kind, parsed)
+    if (!structured) throw new Error('Claude returned a response that failed structured validation.')
+    return {
+      action,
+      summary: `Claude ${action} suggestion for ${context.service}`,
+      changes: safeChangesForOutput(kind, structured.output),
+      notes: ['Claude output was validated against the existing CMS schema.', 'Review regulatory, pricing, location and business claims before accepting.', 'Uncertain claims must be verified before publication.'],
+      prompt,
+      structured,
     }
   }
 }
@@ -321,12 +362,10 @@ export async function generateServerSection(
   }
 }
 
-export function getServerAiProvider(): AiProvider {
-  const config = getServerAiConfig()
-
-  if (config.provider === 'gemini') {
-    return new GeminiProvider()
-  }
-
-  return new OpenAiProvider()
+export function getServerAiProvider(providerOverride?: string): AiProvider {
+  const config = getServerAiConfig(providerOverride)
+  if (config.provider === 'claude') return new ClaudeProvider()
+  if (config.provider === 'gemini') return new GeminiProvider()
+  if (config.provider === 'openai') return new OpenAiProvider()
+  throw new Error('No live AI provider selected.')
 }
