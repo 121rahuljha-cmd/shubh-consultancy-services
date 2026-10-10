@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 export const runtime = 'nodejs'
 
 const CACHE_SECONDS = 60 * 60 * 24 * 30
+const GOOGLE_PLACE_ID = process.env.GOOGLE_PLACE_ID || 'ChIJkTi7COtYH44RWlrdu9MW2mY'
 
 type GoogleReview = {
   name?: string
@@ -27,18 +28,17 @@ type PlaceDetails = {
 
 export async function GET() {
   const apiKey = process.env.GOOGLE_PLACES_API_KEY
-  const placeId = process.env.GOOGLE_PLACE_ID
 
-  if (!apiKey || !placeId) {
+  if (!apiKey) {
     return NextResponse.json(
-      { configured: false, reviews: [], error: 'Set GOOGLE_PLACES_API_KEY and the verified GOOGLE_PLACE_ID in server environment variables.' },
+      { configured: false, reviews: [], error: 'Set GOOGLE_PLACES_API_KEY in server environment variables.' },
       { status: 503, headers: { 'Cache-Control': 'no-store' } },
     )
   }
 
   try {
     const response = await fetch(
-      `https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}`,
+      `https://places.googleapis.com/v1/places/${encodeURIComponent(GOOGLE_PLACE_ID)}`,
       {
         headers: {
           'X-Goog-Api-Key': apiKey,
