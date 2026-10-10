@@ -76,7 +76,7 @@ export async function transitionBlog(
     })
 
     const revisionData: Prisma.BlogRevisionCreateInput = {
-      blogPostId: id,
+      blogPost: { connect: { id } },
       version,
       content: (data.content ?? current.content) as Prisma.InputJsonValue,
       changedBy: actorId,
