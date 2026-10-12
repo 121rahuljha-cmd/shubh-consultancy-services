@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
+import * as XLSX from 'xlsx'
 
 type BlogRecord = {
   id: string
@@ -23,6 +24,8 @@ export function BlogManager() {
   const [saving, setSaving] = useState(false)
   const [notice, setNotice] = useState('')
   const [error, setError] = useState('')
+  const [query, setQuery] = useState('')
+  const [statusFilter, setStatusFilter] = useState('all')
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -40,6 +43,19 @@ export function BlogManager() {
   }, [])
 
   useEffect(() => { void load() }, [load])
+
+  const filteredBlogs = blogs.filter((blog) => {
+    const matchesQuery = `${blog.title} ${blog.slug} /blog/${blog.slug}`.toLowerCase().includes(query.trim().toLowerCase())
+    const normalizedStatus = blog.status || 'draft'
+    return matchesQuery && (statusFilter === 'all' || normalizedStatus === statusFilter || (statusFilter === 'pending_approval' && normalizedStatus === 'pending_approval'))
+  })
+
+  const exportBlogs = () => {
+    const rows = filteredBlogs.map((blog) => ({ Title: blog.title, Slug: blog.slug, URL: `${window.location.origin}/blog/${blog.slug}`, Status: blog.status || 'draft', 'Published Date': blog.publishedAt || '', 'Updated Date': blog.updatedAt || '', 'Content Type': 'Blog' }))
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(rows), 'Blogs')
+    XLSX.writeFile(workbook, 'shubh-blog-management.xlsx')
+  }
 
   const startEdit = (blog: BlogRecord) => {
     setForm({
@@ -96,8 +112,8 @@ export function BlogManager() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
         <section className="rounded-xl border border-border bg-background p-5">
-          <div className="flex items-center justify-between gap-3"><h2 className="font-serif text-xl font-bold text-navy">Blog posts</h2><span className="text-xs text-muted-foreground">{blogs.length} record(s)</span></div>
-          {loading ? <p className="py-8 text-sm text-muted-foreground">Loading blogs…</p> : blogs.length === 0 ? <p className="py-8 text-sm text-muted-foreground">No blog records found. Create a draft using the form.</p> : <div className="mt-4 flex flex-col divide-y divide-border">{blogs.map((blog) => <article key={blog.id} className="py-4 first:pt-0"><div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><h3 className="font-semibold text-navy">{blog.title}</h3><p className="mt-1 break-all font-mono text-xs text-muted-foreground">/blog/{blog.slug}</p><span className="mt-2 inline-block rounded-full bg-surface px-2 py-1 text-xs font-bold uppercase text-muted-foreground">{blog.status || 'draft'}</span></div><button type="button" onClick={() => startEdit(blog)} className="rounded-md border border-border px-3 py-2 text-xs font-bold text-brand">Edit</button></div><Link href={`/blog/${blog.slug}`} target="_blank" className="mt-2 inline-block text-xs font-semibold text-brand hover:underline">Open article ↗</Link></article>)}</div>}
+          <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="font-serif text-xl font-bold text-navy">Blog posts</h2><div className="flex flex-wrap gap-2"><span className="self-center text-xs text-muted-foreground">{filteredBlogs.length} of {blogs.length} record(s)</span><button type="button" onClick={exportBlogs} className="rounded-md border border-border px-3 py-2 text-xs font-bold text-brand">Export Excel</button></div></div><div className="mt-4 grid gap-2 md:grid-cols-[1fr_200px]"><input className={inputClass} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search title, slug or URL…" aria-label="Search blogs" /><select className={inputClass} value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} aria-label="Filter blog status"><option value="all">All statuses</option><option value="published">Published</option><option value="draft">Draft</option><option value="unpublished">Unpublished</option><option value="pending_approval">AI pending approval</option></select></div>
+          {loading ? <p className="py-8 text-sm text-muted-foreground">Loading blogs…</p> : filteredBlogs.length === 0 ? <p className="py-8 text-sm text-muted-foreground">{blogs.length ? "No blogs match the current search or filter." : "No blog records found. Create a draft using the form."}</p> : <div className="mt-4 flex flex-col divide-y divide-border">{filteredBlogs.map((blog) => <article key={blog.id} className="py-4 first:pt-0"><div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><h3 className="font-semibold text-navy">{blog.title}</h3><p className="mt-1 break-all font-mono text-xs text-muted-foreground">/blog/{blog.slug}</p><p className="mt-1 text-xs text-muted-foreground">Published: {blog.publishedAt ? new Date(blog.publishedAt).toLocaleDateString() : "—"} · Updated: {blog.updatedAt ? new Date(blog.updatedAt).toLocaleDateString() : "—"}</p><span className="mt-2 inline-block rounded-full bg-surface px-2 py-1 text-xs font-bold uppercase text-muted-foreground">{blog.status || 'draft'}</span></div><button type="button" onClick={() => startEdit(blog)} className="rounded-md border border-border px-3 py-2 text-xs font-bold text-brand">Edit</button></div><Link href={`/blog/${blog.slug}`} target="_blank" className="mt-2 inline-block text-xs font-semibold text-brand hover:underline">Open article ↗</Link></article>)}</div>}
         </section>
 
         <section className="rounded-xl border border-border bg-background p-5">
