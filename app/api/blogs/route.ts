@@ -13,7 +13,8 @@ export async function GET() {
     return NextResponse.json({ blogs: await listPublishedBlogs() })
   }
   try {
-    const blogs = await createProductionRepository().listBlogs()\n    return NextResponse.json({ blogs: blogs.map(blog => ({ ...blog, status: String(blog.status).toLowerCase(), publishedAt: blog.publishedAt?.toISOString() || null, createdAt: blog.createdAt.toISOString(), updatedAt: blog.updatedAt.toISOString() })) })
+    const blogs = await createProductionRepository().listBlogs()
+    return NextResponse.json({ blogs: blogs.map(blog => ({ ...blog, status: String(blog.status).toLowerCase(), publishedAt: blog.publishedAt?.toISOString() || null, createdAt: blog.createdAt.toISOString(), updatedAt: blog.updatedAt.toISOString() })) })
   } catch {
     return NextResponse.json({ error: 'Blogs could not be loaded.' }, { status: 503 })
   }
