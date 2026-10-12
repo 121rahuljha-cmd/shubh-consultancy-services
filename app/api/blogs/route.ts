@@ -13,7 +13,7 @@ export async function GET() {
     return NextResponse.json({ blogs: await listPublishedBlogs() })
   }
   try {
-    return NextResponse.json({ blogs: await createProductionRepository().listBlogs() })
+    const blogs = await createProductionRepository().listBlogs()\n    return NextResponse.json({ blogs: blogs.map(blog => ({ ...blog, status: String(blog.status).toLowerCase(), publishedAt: blog.publishedAt?.toISOString() || null, createdAt: blog.createdAt.toISOString(), updatedAt: blog.updatedAt.toISOString() })) })
   } catch {
     return NextResponse.json({ error: 'Blogs could not be loaded.' }, { status: 503 })
   }
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 
   try {
     const blog = await saveBlogServer({ id: body.id, slug: body.slug, title: body.title, content: body.content, status, excerpt: body.excerpt, author: body.author, category: body.category, tags: body.tags, featuredImage: body.featuredImage, seo: body.seo, sections: body.sections })
-    return NextResponse.json({ blog }, { status: 200 })
+    return NextResponse.json({ blog: { ...blog, status: String(blog.status).toLowerCase(), publishedAt: blog.publishedAt?.toISOString() || null, createdAt: blog.createdAt.toISOString(), updatedAt: blog.updatedAt.toISOString() } }, { status: 200 })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Blog could not be saved.'
     return NextResponse.json({ error: message.includes('Unique constraint') ? 'That slug is already in use. Choose a unique slug.' : 'Blog could not be saved.' }, { status: 400 })
