@@ -13,6 +13,7 @@ const topics = ['Eligibility and application guide','Documents checklist','Appli
 const slugify = (value: string) => value.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 const obj = (value: unknown): Record<string, unknown> => value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}
 const str = (value: unknown) => typeof value === 'string' ? value : ''
+const waitForAiSlot = () => new Promise<void>((resolve) => window.setTimeout(resolve, 3200))
 
 function makePlan(command: string, name: string, destination: 'service' | 'blog' | 'both'): Target[] {
   const match = command.match(/\b(\d{1,3})\s*(?:seo\s*)?(?:landing\s*)?(?:pages?|blogs?|articles?|posts?)\b/i)
@@ -28,7 +29,7 @@ function makePlan(command: string, name: string, destination: 'service' | 'blog'
 }
 
 function contentFrom(suggestion: AiSuggestion, title: string) {
-  const changes = suggestion.changes as Record<string, unknown>
+  const changes = suggestion.changes as unknown as Record<string, unknown>
   const hero = obj(changes.hero), about = obj(changes.about)
   const list = (key: string) => Array.isArray(changes[key]) ? changes[key] as Record<string, unknown>[] : []
   const benefits = list('benefits'), steps = list('process'), faqs = list('faqs')
@@ -111,7 +112,7 @@ export function AiCmsCommandCenter() {
         const batch = pending.slice(start, start + 10)
         setProgress({ done, total: pending.length, batch: Math.floor(start / 10) + 1 })
         for (const item of batch) {
-          try { await generateOne(item, record); setPlan((current) => current.map((x) => x.id === item.id ? { ...x, status: 'saved', error: undefined } : x)) }
+          try { await waitForAiSlot(); await generateOne(item, record); setPlan((current) => current.map((x) => x.id === item.id ? { ...x, status: 'saved', error: undefined } : x)) }
           catch (error) { const message = error instanceof Error ? error.message : 'Generation failed.'; setPlan((current) => current.map((x) => x.id === item.id ? { ...x, status: 'failed', error: message } : x)) }
           done++; setProgress({ done, total: pending.length, batch: Math.floor(start / 10) + 1 })
         }
