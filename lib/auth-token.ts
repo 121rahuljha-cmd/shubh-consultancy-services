@@ -2,7 +2,8 @@ import { createHmac, timingSafeEqual } from 'node:crypto'
 
 export type SessionToken = { userId: string; role: 'ADMIN' | 'EDITOR' | 'AUTHOR' | 'SEO_MANAGER'; expiresAt: string }
 export const authCookieName = 'scs-admin-session'
-const sessionLifetimeSeconds = 60 * 60 * 8
+// Signed session expires after 24 hours; logout clears the browser cookie.
+const sessionLifetimeSeconds = 60 * 60 * 24
 const secret = () => process.env.AUTH_SECRET || ''
 const encode = (value: string) => Buffer.from(value).toString('base64url')
 const decode = (value: string) => Buffer.from(value, 'base64url').toString('utf8')
