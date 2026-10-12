@@ -54,6 +54,8 @@ function BlogBody({ value }: { value: unknown }) {
     if (sections.length) {
       return (
         <div className="space-y-8">
+          {typeof record.introduction === 'string' && record.introduction && <p className="whitespace-pre-line leading-8 text-base text-muted-foreground">{record.introduction}</p>}
+          {typeof record.body === 'string' && record.body && <p className="whitespace-pre-line leading-8 text-base text-muted-foreground">{record.body}</p>}
           {sections.map((section, index) => {
             const sectionRecord = section as Record<string, unknown>
             const title = typeof sectionRecord.heading === 'string' ? sectionRecord.heading : typeof sectionRecord.title === 'string' ? sectionRecord.title : ''
@@ -156,8 +158,8 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
   return (
     <main className="bg-surface">
-      {articleSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'Article', headline: blog.title, description: summary, datePublished: blog.publishedAt || blog.createdAt, dateModified: blog.updatedAt, author: { '@type': 'Organization', name: blog.author || 'Shubh Consultancy Services' }, image: typeof featuredImage.image === 'string' && featuredImage.image ? [featuredImage.image] : undefined, mainEntityOfPage: { '@type': 'WebPage', '@id': typeof seo.canonicalUrl === 'string' && seo.canonicalUrl ? seo.canonicalUrl : `/blog/${slug}` } }) }} />}
-      {faqSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map(faq => ({ '@type': 'Question', name: faq.question, acceptedAnswer: { '@type': 'Answer', text: faq.answer } })) }) }} />}
+      {articleSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'Article', headline: blog.title, description: summary, datePublished: blog.publishedAt || blog.createdAt, dateModified: blog.updatedAt, author: { '@type': 'Organization', name: blog.author || 'Shubh Consultancy Services' }, image: typeof featuredImage.image === 'string' && featuredImage.image ? [featuredImage.image] : undefined, mainEntityOfPage: { '@type': 'WebPage', '@id': typeof seo.canonicalUrl === 'string' && seo.canonicalUrl ? seo.canonicalUrl : `/blog/${slug}` } }).replace(/</g, '\\u003c') }} />}
+      {faqSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map(faq => ({ '@type': 'Question', name: faq.question, acceptedAnswer: { '@type': 'Answer', text: faq.answer } })) }).replace(/</g, '\\u003c') }} />}
       <article className="mx-auto max-w-4xl px-4 py-12 md:px-6 md:py-16">
         <div className="mb-8">
           <Link href="/blog" className="text-sm font-semibold text-brand hover:underline">
@@ -182,6 +184,8 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
         {typeof contentRecord.introduction === 'string' && contentRecord.introduction && <p className="mb-8 whitespace-pre-line text-lg leading-8 text-muted-foreground">{contentRecord.introduction}</p>}
         <div className="space-y-8">
           <BlogBody value={blog.content} />
+          {contentRecord.conclusion && <section className="space-y-3"><h2 className="font-serif text-2xl font-bold text-navy">Conclusion</h2><BlogBody value={contentRecord.conclusion} /></section>}
+          {faqs.length > 0 && <section className="space-y-4"><h2 className="font-serif text-2xl font-bold text-navy">Frequently asked questions</h2>{faqs.map((faq, index) => <div key={String(faq.id || index)} className="border-b border-border pb-4"><h3 className="font-semibold text-navy">{String(faq.question)}</h3><p className="mt-2 whitespace-pre-line leading-7 text-muted-foreground">{String(faq.answer)}</p></div>)}</section>}
         </div>
       </article>
 
