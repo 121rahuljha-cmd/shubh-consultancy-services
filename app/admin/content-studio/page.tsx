@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
-import { ContentCreator } from '@/components/admin/content-creator'
+import { redirect } from 'next/navigation'
 
-export const metadata: Metadata = { title: 'Content Studio', robots: { index: false, follow: false } }
+export const metadata: Metadata = { title: 'AI Service Builder', robots: { index: false, follow: false } }
 
+// Keep old bookmarks working while the Service Builder AI becomes the canonical editor.
 export default function ContentStudioPage() {
-  return <ContentCreator />
+  redirect('/admin/service-builder/ai')
 }
