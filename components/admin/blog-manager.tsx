@@ -32,7 +32,7 @@ function fromRecord(blog: RecordBlog): Draft {
   return {
     ...blank(), id: blog.id, title: blog.title || '', slug: blog.slug || '',
     excerpt: str(blog.excerpt || c.summary || c.excerpt), author: str(blog.author), category: str(blog.category),
-    tags: arr<string>(blog.tags), status: blog.status || 'draft', summary: str(c.summary || blog.excerpt),
+    tags: arr<string>(blog.tags), status: (['published', 'unpublished', 'archived'].includes(String(blog.status).toLowerCase()) ? String(blog.status).toLowerCase() : 'draft') as Status, summary: str(c.summary || blog.excerpt),
     introduction: str(c.introduction || c.intro), body: typeof blog.content === 'string' ? blog.content : str(c.body || c.content || c.text || c.markdown),
     conclusion: str(c.conclusion), sections, links: arr<RelatedLink>(seo.links), faqs: arr<Faq>(seo.faqs),
     featuredImage: { ...emptyImage(), ...obj(blog.featuredImage) } as ImageData,
