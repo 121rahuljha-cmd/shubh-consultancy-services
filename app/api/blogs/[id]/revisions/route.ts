@@ -31,7 +31,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   if (!body.revisionId) return NextResponse.json({ error: 'Revision ID is required.' }, { status: 400 })
   try {
     const blog = await createProductionRepository().restoreBlogRevision(id, body.revisionId)
-    return NextResponse.json({ blog })
+    return NextResponse.json({ blog: { ...blog, status: String(blog.status).toLowerCase(), publishedAt: blog.publishedAt?.toISOString() || null, createdAt: blog.createdAt.toISOString(), updatedAt: blog.updatedAt.toISOString() } })
   } catch {
     return NextResponse.json({ error: 'Revision could not be restored.' }, { status: 404 })
   }
