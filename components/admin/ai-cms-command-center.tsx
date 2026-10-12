@@ -15,17 +15,16 @@ const obj = (value: unknown): Record<string, unknown> => value && typeof value =
 const str = (value: unknown) => typeof value === 'string' ? value : ''
 const waitForAiSlot = () => new Promise<void>((resolve) => window.setTimeout(resolve, 3200))
 
-function makePlan(command: string, name: string, destination: 'service' | 'blog' | 'both'): Target[] {
+function makePlan(command: string, name: string, kind: Kind): Target[] {
   const match = command.match(/\b(\d{1,3})\s*(?:seo\s*)?(?:landing\s*)?(?:pages?|blogs?|articles?|posts?)\b/i)
   const count = Math.max(1, Math.min(100, Number(match?.[1] || 10)))
   const local = /\b(state|states|ut|uts|union territor|location|city|cities|state-wise|state wise|across india|india ke har)\b/i.test(command)
-  const types: Kind[] = destination === 'both' ? ['service', 'blog'] : [destination]
-  return types.flatMap((kind) => Array.from({ length: count }, (_, i) => {
+  return Array.from({ length: count }, (_, i) => {
     const location = local && i < locations.length ? locations[i] : ''
     const title = location ? name + ' in ' + location : name + ': ' + topics[i % topics.length] + (i >= topics.length ? ' (' + (i + 1) + ')' : '')
     const slug = slugify(title)
     return { id: kind + '-' + i + '-' + slug, title, slug, location, kind, status: 'planned' as const }
-  }))
+  })
 }
 
 function contentFrom(suggestion: AiSuggestion, title: string) {
@@ -43,11 +42,10 @@ function contentFrom(suggestion: AiSuggestion, title: string) {
   ].filter(Boolean).join('\n\n')
 }
 
-export function AiCmsCommandCenter() {
-  const [command, setCommand] = useState('Create 10 SEO drafts for Food Licence. Include unique SEO titles, meta descriptions, headings and FAQs. Save as drafts only.')
+export function AiCmsCommandCenter({ mode = 'page' }: { mode?: 'blog' | 'page' }) {
+  const [command, setCommand] = useState(mode === 'blog' ? 'Create 10 original informational SEO blog drafts about Food Licence. Include search intent, keyword clusters, a useful article outline, meta title, meta description, internal-link suggestions and FAQs. Save as drafts only.' : 'Create 10 information/service page drafts for Food Licence. Preserve the complete page structure, SEO fields, intent, topic/entity map, local SEO opportunities, internal links, FAQs, schema and trust signals. Save as drafts only.')
   const [serviceSlug, setServiceSlug] = useState('fssai-food-licence')
-  const [destination, setDestination] = useState<'service' | 'blog' | 'both'>('both')
-  const [records, setRecords] = useState<ServiceBuilderRecord[]>([])
+    const [records, setRecords] = useState<ServiceBuilderRecord[]>([])
   const [plan, setPlan] = useState<Target[]>([])
   const [approved, setApproved] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -62,7 +60,7 @@ export function AiCmsCommandCenter() {
     const all = records.length ? records : loadRecords()
     const base = all.find((x) => x.serviceSlug === serviceSlug) || all[0]
     const serviceName = base?.serviceName || command.match(/(?:for|about|on)\s+(.+?)(?:[.,;]|$)/i)?.[1] || 'Food Licence'
-    const next = makePlan(command, serviceName, destination)
+    const next = makePlan(command, serviceName, mode === 'blog' ? 'blog' : 'service')
     setPlan(next); setApproved(false)
     setNotice('Plan ready: ' + next.length + ' draft item(s). Nothing has been generated or saved yet. Review titles and slugs, then approve.')
   }
@@ -122,12 +120,12 @@ export function AiCmsCommandCenter() {
   }
 
   return <main className="min-h-screen bg-surface"><div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
-    <div className="mb-8 flex flex-wrap items-end justify-between gap-4"><div><p className="eyebrow">Admin / AI CMS Command Center</p><h1 className="mt-2 font-serif text-3xl font-bold text-navy">AI CMS Command Center</h1><p className="mt-2 max-w-3xl text-sm text-muted-foreground">Hindi ya English mein command likho. Pehle plan review hoga, phir 10-item batches mein drafts generate honge. Publishing sirf review ke baad manual hogi.</p></div><div className="flex flex-wrap gap-2"><Link href="/admin/service-builder" className="rounded-md border border-border px-4 py-2.5 text-sm font-bold text-navy">Service Builder</Link><Link href="/admin/blogs" className="rounded-md border border-border px-4 py-2.5 text-sm font-bold text-navy">Blog Management</Link><Link href="/admin/pages" className="rounded-md border border-border px-4 py-2.5 text-sm font-bold text-navy">Pages Management</Link></div></div>
-    <section className="rounded-xl border border-border bg-background p-5 md:p-6"><div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-xl font-bold text-navy">Aap kya create karna chahte hain?</h2><p className="mt-1 text-sm text-muted-foreground">Approval first · Draft only · Existing CMS storage</p></div><span className="rounded-full bg-brand-tint px-3 py-1 text-xs font-bold text-brand">Draft mode</span></div>
+    <div className="mb-8 flex flex-wrap items-end justify-between gap-4"><div><p className="eyebrow">Admin / AI {mode === 'blog' ? 'Blog' : 'Information Page'} Command Center</p><h1 className="mt-2 font-serif text-3xl font-bold text-navy">{mode === 'blog' ? 'AI Blog Command Center' : 'AI Information Page Command Center'}</h1><p className="mt-2 max-w-3xl text-sm text-muted-foreground">{mode === 'blog' ? 'Blog articles ke liye dedicated workflow: informational intent, article outline, keyword coverage, internal links, FAQs aur meta fields.' : 'Existing information/service pages ke liye dedicated workflow: complete page sections, SEO research, topic/entity coverage, local SEO, internal links, FAQs, schema aur trust signals.'} Hindi ya English command likho; pehle plan approve hoga, phir 10-item batches mein draft-only generation chalegi.</p></div><div className="flex flex-wrap gap-2"><Link href="/admin/blogs/ai" className="rounded-md border border-border px-4 py-2.5 text-sm font-bold text-navy">Blog Command Center</Link><Link href="/admin/pages/ai" className="rounded-md border border-border px-4 py-2.5 text-sm font-bold text-navy">Information Page Command Center</Link><Link href={mode === 'blog' ? '/admin/blogs' : '/admin/pages'} className="rounded-md border border-border px-4 py-2.5 text-sm font-bold text-navy">{mode === 'blog' ? 'Blog Management' : 'Pages Management'}</Link></div></div>
+    <section className="rounded-xl border border-border bg-background p-5 md:p-6"><div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-xl font-bold text-navy">{mode === 'blog' ? 'Blog draft instructions' : 'Information page instructions'}</h2><p className="mt-1 text-sm text-muted-foreground">{mode === 'blog' ? 'Blog Management storage · editorial format · approval first · draft only' : 'Pages Management storage · full information-page SEO structure · approval first · draft only'}</p></div><span className="rounded-full bg-brand-tint px-3 py-1 text-xs font-bold text-brand">Draft mode</span></div>
       <label className="mt-5 block text-sm font-semibold text-navy">Natural-language command</label><textarea value={command} onChange={(event) => setCommand(event.target.value)} rows={5} className="mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none focus:border-brand focus:ring-2 focus:ring-brand/20" placeholder="Example: Food Licence par 30 SEO blog drafts banao, unique slug, meta description aur FAQs ke saath." />
-      <div className="mt-4 grid gap-4 md:grid-cols-2"><label className="flex flex-col gap-2 text-sm font-semibold text-navy">Destination<select value={destination} onChange={(event) => setDestination(event.target.value as 'service' | 'blog' | 'both')} className="rounded-lg border border-border bg-background px-3 py-2.5 font-normal text-foreground"><option value="service">Service / landing pages</option><option value="blog">Blog posts</option><option value="both">Both: service pages + blogs</option></select></label><label className="flex flex-col gap-2 text-sm font-semibold text-navy">Base service<select value={serviceSlug} onFocus={() => { if (!records.length) loadRecords() }} onChange={(event) => setServiceSlug(event.target.value)} className="rounded-lg border border-border bg-background px-3 py-2.5 font-normal text-foreground">{(records.length ? records : getBuilderRecords()).map((record) => <option key={record.serviceSlug} value={record.serviceSlug}>{record.serviceName}</option>)}</select></label></div>
+      <div className="mt-4 grid gap-4 md:grid-cols-2"><label className="flex flex-col gap-2 text-sm font-semibold text-navy">{mode === 'blog' ? 'Related service / topic context' : 'Base information-page template'}<select value={serviceSlug} onFocus={() => { if (!records.length) loadRecords() }} onChange={(event) => setServiceSlug(event.target.value)} className="rounded-lg border border-border bg-background px-3 py-2.5 font-normal text-foreground">{(records.length ? records : getBuilderRecords()).map((record) => <option key={record.serviceSlug} value={record.serviceSlug}>{record.serviceName}</option>)}</select></label></div>
       <div className="mt-4 flex flex-wrap gap-3"><button type="button" onClick={planCommand} className="rounded-lg bg-brand px-5 py-3 text-sm font-bold text-white">1. Generate plan</button><button type="button" onClick={() => { setPlan([]); setApproved(false); setNotice('Plan cleared. Previously saved content was not deleted.') }} className="rounded-lg border border-border px-5 py-3 text-sm font-bold text-navy">Clear plan</button></div>
-      <p className="mt-3 text-xs text-muted-foreground">State-wise plan uses India’s 28 states and 8 Union Territories. Extra requested items use distinct topic angles, not only swapped location names. Review titles/slugs before approving.</p>
+      <p className="mt-3 text-xs text-muted-foreground">{mode === 'blog' ? 'Blog drafts use informational intent, article structure, practical examples, FAQs and SEO metadata. Avoid thin/duplicate articles; review keyword overlap before approval.' : 'Information-page drafts retain page intent, SEO fields, topic/entity coverage, location-specific guidance, internal-link opportunities, FAQ/schema and trust signals. State-wise pages must contain genuine local differences, not doorway-page swaps.'} State-wise plans use India’s 28 states and 8 Union Territories where requested. Review titles/slugs before approving.</p>
     </section>
     {notice && <div role="status" className="mt-4 rounded-lg border border-border bg-background p-4 text-sm text-foreground">{notice}</div>}
     {plan.length > 0 && <section className="mt-6 rounded-xl border border-border bg-background p-5 md:p-6"><div className="flex flex-wrap items-start justify-between gap-4"><div><h2 className="text-xl font-bold text-navy">Command execution plan</h2><p className="mt-1 text-sm text-muted-foreground">{plan.length} planned · {saved} saved · {failed} failed · batches of 10</p></div><div className="flex flex-wrap gap-2"><button type="button" disabled={busy} onClick={() => { setApproved(true); setNotice('Plan approved. Press Start batch generation when ready.') }} className="rounded-lg border border-brand px-4 py-2.5 text-sm font-bold text-brand disabled:opacity-50">Approve plan</button><button type="button" disabled={!approved || busy} onClick={() => void run(false)} className="rounded-lg bg-brand px-4 py-2.5 text-sm font-bold text-white disabled:opacity-50">Start batch generation</button>{failed > 0 && <button type="button" disabled={!approved || busy} onClick={() => void run(true)} className="rounded-lg border border-border px-4 py-2.5 text-sm font-bold text-navy disabled:opacity-50">Retry failed</button>}</div></div>
