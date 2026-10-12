@@ -65,7 +65,7 @@ export function HeaderDropdownOverlay({
             <li key={item.href}>
               <a
                 href={item.href}
-                className="group flex min-h-11 items-center justify-between gap-3 rounded-md px-3 py-2.5 transition-colors hover:bg-brand-tint"
+                className="group flex min-h-9 items-center justify-between gap-3 rounded-md px-3 py-2 transition-colors hover:bg-brand-tint"
               >
                 <span className="text-sm font-semibold text-navy group-hover:text-brand">
                   {item.navLabel}
