@@ -2,7 +2,8 @@ import { createHmac, timingSafeEqual } from 'node:crypto'
 
 export type SessionToken = { userId: string; role: 'ADMIN' | 'EDITOR' | 'AUTHOR' | 'SEO_MANAGER'; expiresAt: string }
 export const authCookieName = 'scs-admin-session'
-const sessionLifetimeSeconds = 60 * 60 * 8
+// Keep the admin signed in across all CMS routes and browser restarts for 30 days.
+const sessionLifetimeSeconds = 60 * 60 * 24 * 30
 const secret = () => process.env.AUTH_SECRET || ''
 const encode = (value: string) => Buffer.from(value).toString('base64url')
 const decode = (value: string) => Buffer.from(value, 'base64url').toString('utf8')
