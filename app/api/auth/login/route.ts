@@ -21,7 +21,8 @@ export async function POST(request: Request) {
   if (!user || !validPassword(password, user.passwordHash)) return NextResponse.json({ error: 'Invalid admin credentials.' }, { status: 401 })
   try {
     const response = NextResponse.json({ ok: true })
-    response.cookies.set(authCookieName, createSessionToken({ userId: user.id, role: user.role }), { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', path: '/', maxAge: 60 * 60 * 8 })
+    // One login grants access across admin pages for 24 hours; logout clears the cookie.
+    response.cookies.set(authCookieName, createSessionToken({ userId: user.id, role: user.role }), { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', path: '/', maxAge: 60 * 60 * 24 })
     return response
   } catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : 'Admin session could not be created.' }, { status: 503 }) }
 }
