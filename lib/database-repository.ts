@@ -146,7 +146,45 @@ export class DatabaseContentRepository implements ContentRepository, ScalableCon
   async savePageRevisionDb(page: CmsPage, sections: CmsSection[], changeType: 'CREATE' | 'EDIT' | 'AI_ACCEPT' | 'PUBLISH' | 'UNPUBLISH' | 'RESTORE') { const row = await this.db.servicePage.findUnique({ where: { id: page.id }, select: { version: true } }); if (!row) throw new Error('Page not found.'); return this.db.contentRevision.create({ data: { id: crypto.randomUUID(), servicePageId: page.id, version: row.version, content: asJson({ page, sections }), changedBy: 'admin', changeType, status: statusToDb(page.status === 'published' ? 'published' : page.status === 'archived' ? 'archived' : 'draft'), } }) }
 
   async listBlogs() { return this.db.blogPost.findMany({ orderBy: { updatedAt: 'desc' } }) }
-  async saveBlog(input: { id?: string; slug: string; title: string; content: unknown; status?: 'draft' | 'published' | 'unpublished' }) { const status = statusToDb(input.status || 'draft'); return this.db.blogPost.upsert({ where: { id: input.id || crypto.randomUUID() }, create: { id: input.id || crypto.randomUUID(), slug: input.slug, title: input.title, content: asJson(input.content), status, publishedAt: status === 'PUBLISHED' ? new Date() : null }, update: { slug: input.slug, title: input.title, content: asJson(input.content), status, publishedAt: status === 'PUBLISHED' ? new Date() : null } }) }
+
+  async deleteBlog(id: string) {
+    return this.db.blogPost.delete({ where: { id } })
+  }
+
+  async listBlogRevisions(id: string) {
+    return this.db.blogRevision.findMany({ where: { blogPostId: id }, orderBy: { version: 'desc' }, select: { id: true, version: true, status: true, changeType: true, createdAt: true } })
+  }
+
+  async restoreBlogRevision(id: string, revisionId: string) {
+    return this.db.$transaction(async (tx) => {
+      const blog = await tx.blogPost.findUnique({ where: { id } })
+      if (!blog) throw new Error('Blog not found.')
+      const revision = await tx.blogRevision.findFirst({ where: { id: revisionId, blogPostId: id } })
+      if (!revision) throw new Error('Revision not found.')
+      const snapshot = revision.content as Record<string, unknown>
+      const nextVersion = blog.version + 1
+      await tx.blogRevision.create({ data: { blogPostId: id, version: nextVersion, content: asJson({ title: blog.title, slug: blog.slug, excerpt: blog.excerpt, author: blog.author, category: blog.category, tags: blog.tags, featuredImage: blog.featuredImage, content: blog.content, seo: blog.seo, sections: blog.sections }), changedBy: 'admin', status: 'DRAFT', changeType: 'RESTORE' } })
+      return tx.blogPost.update({ where: { id }, data: { title: String(snapshot.title || blog.title), slug: String(snapshot.slug || blog.slug), excerpt: typeof snapshot.excerpt === 'string' ? snapshot.excerpt : null, author: typeof snapshot.author === 'string' ? snapshot.author : null, category: typeof snapshot.category === 'string' ? snapshot.category : null, tags: asJson(snapshot.tags ?? []), featuredImage: asJson(snapshot.featuredImage ?? {}), content: asJson(snapshot.content ?? {}), seo: asJson(snapshot.seo ?? {}), sections: asJson(snapshot.sections ?? []), status: 'DRAFT', version: { increment: 1 }, publishedAt: null, archivedAt: null }) 
+    })
+  }
+
+  async saveBlog(input: { id?: string; slug: string; title: string; content: unknown; status?: 'draft' | 'published' | 'unpublished' | 'archived'; excerpt?: string; author?: string; category?: string; tags?: unknown; featuredImage?: unknown; seo?: unknown; sections?: unknown }) {
+    const status = input.status === 'archived' ? 'ARCHIVED' : statusToDb(input.status || 'draft')
+    const id = input.id || crypto.randomUUID()
+    return this.db.$transaction(async (tx) => {
+      const existing = await tx.blogPost.findUnique({ where: { id } })
+      const snapshot = { title: input.title, slug: input.slug, excerpt: input.excerpt ?? existing?.excerpt ?? null, author: input.author ?? existing?.author ?? null, category: input.category ?? existing?.category ?? null, tags: input.tags ?? existing?.tags ?? [], featuredImage: input.featuredImage ?? existing?.featuredImage ?? {}, content: input.content, seo: input.seo ?? existing?.seo ?? {}, sections: input.sections ?? existing?.sections ?? [] }
+      const nextVersion = (existing?.version || 0) + 1
+      const publishedAt = status === 'PUBLISHED' ? (existing?.publishedAt || new Date()) : null
+      const record = await tx.blogPost.upsert({
+        where: { id },
+        create: { id, slug: input.slug, title: input.title, excerpt: snapshot.excerpt as string | null, author: snapshot.author as string | null, category: snapshot.category as string | null, tags: asJson(snapshot.tags), featuredImage: asJson(snapshot.featuredImage), content: asJson(snapshot.content), seo: asJson(snapshot.seo), sections: asJson(snapshot.sections), status, version: nextVersion, publishedAt, lastPublishedAt: status === 'PUBLISHED' ? new Date() : null, archivedAt: status === 'ARCHIVED' ? new Date() : null },
+        update: { slug: input.slug, title: input.title, excerpt: snapshot.excerpt as string | null, author: snapshot.author as string | null, category: snapshot.category as string | null, tags: asJson(snapshot.tags), featuredImage: asJson(snapshot.featuredImage), content: asJson(snapshot.content), seo: asJson(snapshot.seo), sections: asJson(snapshot.sections), status, version: nextVersion, publishedAt, lastPublishedAt: status === 'PUBLISHED' ? new Date() : existing?.lastPublishedAt, archivedAt: status === 'ARCHIVED' ? new Date() : null }
+      })
+      await tx.blogRevision.create({ data: { blogPostId: id, version: nextVersion, content: asJson(snapshot), changedBy: 'admin', status, changeType: !existing ? 'CREATE' : status === 'PUBLISHED' ? 'PUBLISH' : status === 'UNPUBLISHED' ? 'UNPUBLISH' : 'EDIT' } })
+      return record
+    })
+  }
   async listContentPlans() { return this.db.contentPlan.findMany({ orderBy: { updatedAt: 'desc' } }) }
   async saveContentPlan(plan: ContentPlan) { return this.db.contentPlan.upsert({ where: { id: plan.id }, create: { id: plan.id, title: plan.title, slug: plan.slug, pageType: plan.pageType, serviceId: plan.serviceId || null, stateId: plan.stateId || null, cityId: plan.cityId || null, status: statusToDb(plan.status === 'planned' ? 'draft' : plan.status === 'published' ? 'published' : 'unpublished'), planData: asJson(plan) }, update: { title: plan.title, slug: plan.slug, pageType: plan.pageType, serviceId: plan.serviceId || null, stateId: plan.stateId || null, cityId: plan.cityId || null, status: statusToDb(plan.status === 'planned' ? 'draft' : plan.status === 'published' ? 'published' : 'unpublished'), planData: asJson(plan) } }) }
 
