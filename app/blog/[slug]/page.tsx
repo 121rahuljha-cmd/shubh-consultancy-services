@@ -112,17 +112,28 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return { title: 'Blog not found', robots: { index: false, follow: false } }
   }
 
-  const description = pickText(blog.content).slice(0, 160)
+  const seo = blog.seo && typeof blog.seo === 'object' ? blog.seo as Record<string, unknown> : {}
+  const description = typeof seo.metaDescription === 'string' && seo.metaDescription ? seo.metaDescription : pickText(blog.content).slice(0, 160)
+  const canonical = typeof seo.canonicalUrl === 'string' && seo.canonicalUrl ? seo.canonicalUrl : `/blog/${slug}`
+  const index = seo.robotsIndex !== false
+  const follow = seo.robotsFollow !== false
 
   return {
-    title: blog.title,
+    title: typeof seo.seoTitle === 'string' && seo.seoTitle ? seo.seoTitle : blog.title,
     description: description || 'Read this article on the Shubh Consultancy Services blog.',
-    alternates: { canonical: `/blog/${slug}` },
-    robots: { index: true, follow: true },
+    alternates: { canonical },
+    robots: { index, follow },
     openGraph: {
-      title: blog.title,
-      description: description || 'Read this article on the Shubh Consultancy Services blog.',
-      url: `/blog/${slug}`,
+      title: typeof seo.ogTitle === 'string' && seo.ogTitle ? seo.ogTitle : blog.title,
+      description: typeof seo.ogDescription === 'string' && seo.ogDescription ? seo.ogDescription : description || 'Read this article on the Shubh Consultancy Services blog.',
+      url: canonical,
+      ...(typeof seo.ogImage === 'string' && seo.ogImage ? { images: [seo.ogImage] } : {}),
+    },
+    twitter: {
+      card: typeof seo.twitterImage === 'string' && seo.twitterImage ? 'summary_large_image' : 'summary',
+      title: typeof seo.twitterTitle === 'string' && seo.twitterTitle ? seo.twitterTitle : blog.title,
+      description: typeof seo.twitterDescription === 'string' && seo.twitterDescription ? seo.twitterDescription : description,
+      ...(typeof seo.twitterImage === 'string' && seo.twitterImage ? { images: [seo.twitterImage] } : {}),
     },
   }
 }
@@ -134,10 +145,19 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
   if (!blog || String(blog.status).toLowerCase() !== 'published') notFound()
 
   const pageId = `public-blog-${blog.slug}`
-  const summary = pickText(blog.content).slice(0, 180) || 'Read this article on the Shubh Consultancy Services blog.'
+  const seo = blog.seo && typeof blog.seo === 'object' ? blog.seo as Record<string, unknown> : {}
+  const featuredImage = blog.featuredImage && typeof blog.featuredImage === 'object' ? blog.featuredImage as Record<string, unknown> : {}
+  const summary = typeof blog.excerpt === 'string' && blog.excerpt ? blog.excerpt : pickText(blog.content).slice(0, 180) || 'Read this article on the Shubh Consultancy Services blog.'
+  const contentRecord = blog.content && typeof blog.content === 'object' ? blog.content as Record<string, unknown> : {}
+  const faqs = seo.faqs && Array.isArray(seo.faqs) ? (seo.faqs as Array<Record<string, unknown>>).filter(faq => faq.status === 'active' && typeof faq.question === 'string' && typeof faq.answer === 'string') : []
+  const schemaSettings = seo.schema && typeof seo.schema === 'object' ? seo.schema as Record<string, unknown> : {}
+  const articleSchema = schemaSettings.article !== 'disabled'
+  const faqSchema = schemaSettings.faqPage !== 'disabled' && faqs.length > 0
 
   return (
     <main className="bg-surface">
+      {articleSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'Article', headline: blog.title, description: summary, datePublished: blog.publishedAt || blog.createdAt, dateModified: blog.updatedAt, author: { '@type': 'Organization', name: blog.author || 'Shubh Consultancy Services' }, image: typeof featuredImage.image === 'string' && featuredImage.image ? [featuredImage.image] : undefined, mainEntityOfPage: { '@type': 'WebPage', '@id': typeof seo.canonicalUrl === 'string' && seo.canonicalUrl ? seo.canonicalUrl : `/blog/${slug}` } }) }} />}
+      {faqSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map(faq => ({ '@type': 'Question', name: faq.question, acceptedAnswer: { '@type': 'Answer', text: faq.answer } })) }) }} />}
       <article className="mx-auto max-w-4xl px-4 py-12 md:px-6 md:py-16">
         <div className="mb-8">
           <Link href="/blog" className="text-sm font-semibold text-brand hover:underline">
@@ -156,8 +176,10 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
             })}
           </p>
           <p className="mt-4 max-w-2xl text-lg leading-8 text-muted-foreground">{summary}</p>
+          {typeof featuredImage.image === 'string' && featuredImage.image && <figure className="mt-6"><img src={featuredImage.image} alt={typeof featuredImage.altText === 'string' ? featuredImage.altText : ''} className="max-h-[480px] w-full rounded-xl object-cover" />{typeof featuredImage.caption === 'string' && featuredImage.caption && <figcaption className="mt-2 text-sm text-muted-foreground">{featuredImage.caption}</figcaption>}</figure>}
         </header>
 
+        {typeof contentRecord.introduction === 'string' && contentRecord.introduction && <p className="mb-8 whitespace-pre-line text-lg leading-8 text-muted-foreground">{contentRecord.introduction}</p>}
         <div className="space-y-8">
           <BlogBody value={blog.content} />
         </div>
