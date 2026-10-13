@@ -4,7 +4,9 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { registrationPages } from '@/lib/registration-pages'
 import { getPages, type CmsPage } from '@/lib/page-cms'
-import { getBuilderRecords, type ServiceBuilderRecord } from '@/lib/service-builder'
+import { getBuilderRecords, type ServiceBuilderRecord, saveBuilderRecords } from '@/lib/service-builder'
+import { savePages as saveCmsPages } from '@/lib/page-cms'
+import type { PublicPageDescriptor } from '@/lib/public-page-registry'
 
 type Status = 'planned' | 'draft' | 'review' | 'published' | 'unpublished' | 'archived' | 'pending'
 type PageRow = {
@@ -19,6 +21,11 @@ type PageRow = {
   updatedAt: string
   menu: 'yes' | 'no' | 'unknown'
   editUrl?: string
+  seoUrl?: string
+  aiUrl?: string
+  duplicateKind?: 'cms' | 'builder'
+  duplicateId?: string
+  detailsUrl?: string
 }
 type ApiPage = Record<string, unknown>
 
@@ -32,13 +39,13 @@ const normalizeStatus = (value: unknown): Status => {
 }
 const cmsRow = (page: CmsPage): PageRow => ({
   id: `cms-${page.id}`, title: page.title || 'Untitled CMS page', slug: page.slug || '', url: page.pageType === 'article' ? `/blog/${page.slug}` : page.pageType === 'service' ? `/services/${page.slug}` : `/pages/${page.slug}`,
-  type: page.pageType || 'page', status: normalizeStatus(page.status), source: 'Page CMS (this browser)', keyword: page.primaryKeyword || '', updatedAt: page.updatedAt || '', menu: 'no', editUrl: `/admin/pages?selected=${encodeURIComponent(page.id)}`,
+  type: page.pageType || 'page', status: normalizeStatus(page.status), source: 'Page CMS (this browser)', keyword: page.primaryKeyword || '', updatedAt: page.updatedAt || '', menu: 'no', editUrl: `/admin/pages?selected=${encodeURIComponent(page.id)}`, seoUrl: `/admin/pages?selected=${encodeURIComponent(page.id)}&tab=SEO`, aiUrl: `/admin/pages?selected=${encodeURIComponent(page.id)}&tab=AI`, duplicateKind: 'cms', duplicateId: page.id,
 })
 const builderRow = (record: ServiceBuilderRecord): PageRow => ({
   id: `builder-${record.id}`, title: record.pageTitle || record.serviceName || 'Untitled service', slug: record.slug || record.serviceSlug || '',
   url: `/services/${record.slug || record.serviceSlug}`, type: 'service', status: normalizeStatus(record.status), source: 'Service Builder (this browser)',
   keyword: record.seo?.primaryKeyword || record.serviceName || '', updatedAt: record.updatedAt || '', menu: record.visibility === 'visible' ? 'yes' : 'no',
-  editUrl: `/admin/service-builder/edit?service=${encodeURIComponent(record.serviceSlug || record.slug)}`,
+  editUrl: `/admin/service-builder/edit?service=${encodeURIComponent(record.serviceSlug || record.slug)}`, seoUrl: `/admin/service-builder/edit?service=${encodeURIComponent(record.serviceSlug || record.slug)}&tab=SEO`, aiUrl: `/admin/service-builder/ai?service=${encodeURIComponent(record.serviceSlug || record.slug)}`, duplicateKind: 'builder', duplicateId: record.id,
 })
 const apiRow = (page: ApiPage): PageRow => {
   const isBuilder = typeof page.serviceName === 'string' || typeof page.serviceSlug === 'string'
@@ -50,11 +57,11 @@ const apiRow = (page: ApiPage): PageRow => {
     url: type === 'service' ? `/services/${slug}` : type === 'article' ? `/blog/${slug}` : `/pages/${slug}`,
     type, status: normalizeStatus(page.status), source: 'Database', keyword: String(page.primaryKeyword || page.keyword || ''),
     updatedAt: String(page.updatedAt || ''), menu: page.visibility === 'visible' ? 'yes' : page.visibility === 'hidden' ? 'no' : 'unknown',
-    editUrl: isBuilder ? `/admin/service-builder/edit?service=${encodeURIComponent(String(page.serviceSlug || slug))}` : `/admin/pages?selected=${encodeURIComponent(String(page.id || ''))}`,
+    editUrl: isBuilder ? `/admin/service-builder/edit?service=${encodeURIComponent(String(page.serviceSlug || slug))}` : `/admin/pages?selected=${encodeURIComponent(String(page.id || ''))}`, seoUrl: isBuilder ? `/admin/service-builder/edit?service=${encodeURIComponent(String(page.serviceSlug || slug))}&tab=SEO` : `/admin/pages?selected=${encodeURIComponent(String(page.id || ''))}&tab=SEO`, aiUrl: isBuilder ? `/admin/service-builder/ai?service=${encodeURIComponent(String(page.serviceSlug || slug))}` : `/admin/pages?selected=${encodeURIComponent(String(page.id || ''))}&tab=AI`, duplicateKind: isBuilder ? 'builder' : 'cms', duplicateId: String(page.id || ''),
   }
 }
 
-export function ManagedPageDirectory() {
+export function ManagedPageDirectory({ publicPages = [] }: { publicPages?: PublicPageDescriptor[] }) {
   const [rows, setRows] = useState<PageRow[]>([])
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState('all')
@@ -70,6 +77,7 @@ export function ManagedPageDirectory() {
     const load = async () => {
       const localCms = getPages().map(cmsRow)
       const localBuilder = getBuilderRecords().map(builderRow)
+      const publicRouteRows: PageRow[] = publicPages.map((item) => ({ id: `public-${item.id}`, title: item.title, slug: item.slug, url: item.url, type: item.pageType, status: item.status === 'live' ? 'published' : normalizeStatus(item.status), source: item.source === 'service-data' ? 'Website service data' : item.source === 'location-data' ? 'Location data' : 'Public route', keyword: item.service || item.category || item.title, updatedAt: item.updatedAt || '', menu: 'unknown', editUrl: item.editorHref || item.detailsHref || undefined, seoUrl: item.editorHref ? `${item.editorHref}${item.editorHref.includes('?') ? '&' : '?'}tab=SEO` : undefined, aiUrl: item.aiHref || undefined, detailsUrl: item.detailsHref || undefined }))
       const catalog: PageRow[] = registrationPages.map((item) => ({
         id: `registration-${item.slug}`, title: item.title, slug: item.slug, url: `/registrations/${item.slug}`,
         type: 'registration', status: 'draft', source: 'Registration catalog', keyword: item.keyword || item.title,
@@ -91,7 +99,7 @@ export function ManagedPageDirectory() {
       }
       if (cancelled) return
       // Prefer the database copy when a page exists in both sources.
-      const merged = [...databaseRows, ...localBuilder, ...localCms, ...catalog]
+      const merged = [...databaseRows, ...localBuilder, ...localCms, ...publicRouteRows, ...catalog]
       const seen = new Set<string>()
       const unique = merged.filter((row) => {
         const key = row.url.toLowerCase()
@@ -124,6 +132,20 @@ export function ManagedPageDirectory() {
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const visible = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
   const updateFilter = (setter: (value: string) => void) => (value: string) => { setter(value); setPage(1) }
+  const duplicateRow = (row: PageRow) => {
+    if (!row.duplicateKind || !row.duplicateId) { window.alert('This route is generated or read-only. Open its source/editor to create an editable draft.'); return }
+    if (row.duplicateKind === 'builder') {
+      const original = getBuilderRecords().find((item) => item.id === row.duplicateId)
+      if (!original) { window.alert('Builder record was not found in this browser.'); return }
+      const copy = { ...original, id: `${original.id}-copy-${Date.now()}`, serviceName: `${original.serviceName} copy`, internalName: `${original.internalName} copy`, pageTitle: `${original.pageTitle} copy`, slug: `${original.slug}-copy`, serviceSlug: `${original.serviceSlug}-copy`, status: 'draft' as const, updatedAt: new Date().toISOString() }
+      saveBuilderRecords([...getBuilderRecords(), copy])
+    } else {
+      const original = getPages().find((item) => item.id === row.duplicateId)
+      if (!original) { window.alert('CMS record was not found in this browser.'); return }
+      const copy = { ...original, id: crypto.randomUUID(), title: `${original.title} copy`, slug: `${original.slug}-copy`, status: 'draft' as const, publishedAt: '', updatedAt: new Date().toISOString() }
+      saveCmsPages([...getPages(), copy])
+    }
+  }
 
   return <section className="mb-8 rounded-xl border border-border bg-background p-5 md:p-6">
     <div className="flex flex-wrap items-end justify-between gap-3">
@@ -138,7 +160,7 @@ export function ManagedPageDirectory() {
       <label className="sm:col-span-2 lg:col-span-2"><span className="mb-1.5 block text-xs font-bold text-muted-foreground">Created in</span><select className={inputClass} value={source} onChange={(event) => updateFilter(setSource)(event.target.value)}><option value="all">All sources</option>{[...new Set(rows.map((row) => row.source))].sort().map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
     </div>
     <div className="mt-4 flex flex-wrap items-center justify-between gap-3"><p className="text-xs text-muted-foreground">{loading ? 'Loading records…' : databaseMessage} Search and filters apply across the records loaded from each source.</p><button type="button" onClick={() => { setQuery(''); setStatus('all'); setType('all'); setMenu('all'); setSource('all'); setPage(1) }} className="rounded-md border border-border px-3 py-2 text-xs font-bold text-navy hover:border-brand">Clear filters</button></div>
-    <div className="mt-4 overflow-x-auto rounded-lg border border-border"><table className="min-w-[1050px] w-full text-left text-sm"><thead className="bg-surface text-xs uppercase tracking-wide text-muted-foreground"><tr><th className="px-3 py-3">Page</th><th className="px-3 py-3">URL</th><th className="px-3 py-3">Type / Source</th><th className="px-3 py-3">Status</th><th className="px-3 py-3">Menu</th><th className="px-3 py-3">Updated</th><th className="px-3 py-3">Actions</th></tr></thead><tbody className="divide-y divide-border">{visible.map((row) => <tr key={row.id}><td className="px-3 py-3"><p className="font-semibold text-navy">{row.title}</p><p className="mt-1 text-xs text-muted-foreground">{row.keyword || row.slug}</p></td><td className="px-3 py-3 font-mono text-xs text-muted-foreground">{row.url}</td><td className="px-3 py-3"><p className="capitalize text-navy">{row.type.replaceAll('_', ' ')}</p><p className="mt-1 text-xs text-muted-foreground">{row.source}</p></td><td className="px-3 py-3"><span className={`rounded-full px-2 py-1 text-xs font-bold uppercase ${row.status === 'published' ? 'bg-emerald-100 text-emerald-700' : row.status === 'draft' || row.status === 'planned' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700'}`}>{row.status}</span></td><td className="px-3 py-3 text-xs">{row.menu === 'yes' ? 'Linked' : row.menu === 'no' ? 'Not linked' : 'Unknown'}</td><td className="px-3 py-3 text-xs text-muted-foreground">{row.updatedAt ? new Date(row.updatedAt).toLocaleDateString() : '—'}</td><td className="px-3 py-3"><div className="flex gap-3 text-xs font-bold"><Link href={row.url} target="_blank" className="text-brand hover:underline">View</Link>{row.editUrl && <Link href={row.editUrl} className="text-navy hover:underline">Edit</Link>}</div></td></tr>)}</tbody></table></div>
+    <div className="mt-4 overflow-x-auto rounded-lg border border-border"><table className="min-w-[1050px] w-full text-left text-sm"><thead className="bg-surface text-xs uppercase tracking-wide text-muted-foreground"><tr><th className="px-3 py-3">Page</th><th className="px-3 py-3">URL</th><th className="px-3 py-3">Type / Source</th><th className="px-3 py-3">Status</th><th className="px-3 py-3">Menu</th><th className="px-3 py-3">Updated</th><th className="px-3 py-3">Actions</th></tr></thead><tbody className="divide-y divide-border">{visible.map((row) => <tr key={row.id}><td className="px-3 py-3"><p className="font-semibold text-navy">{row.title}</p><p className="mt-1 text-xs text-muted-foreground">{row.keyword || row.slug}</p></td><td className="px-3 py-3 font-mono text-xs text-muted-foreground">{row.url}</td><td className="px-3 py-3"><p className="capitalize text-navy">{row.type.replaceAll('_', ' ')}</p><p className="mt-1 text-xs text-muted-foreground">{row.source}</p></td><td className="px-3 py-3"><span className={`rounded-full px-2 py-1 text-xs font-bold uppercase ${row.status === 'published' ? 'bg-emerald-100 text-emerald-700' : row.status === 'draft' || row.status === 'planned' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700'}`}>{row.status}</span></td><td className="px-3 py-3 text-xs">{row.menu === 'yes' ? 'Linked' : row.menu === 'no' ? 'Not linked' : 'Unknown'}</td><td className="px-3 py-3 text-xs text-muted-foreground">{row.updatedAt ? new Date(row.updatedAt).toLocaleDateString() : '—'}</td><td className="px-3 py-3"><div className="flex flex-wrap gap-x-3 gap-y-1 text-xs font-bold"><Link href={row.url} target="_blank" className="text-brand hover:underline">View</Link>{row.editUrl && <Link href={row.editUrl} className="text-navy hover:underline">Edit</Link>}{row.duplicateKind && <button type="button" onClick={() => duplicateRow(row)} className="text-navy hover:underline">Duplicate</button>}{row.seoUrl && <Link href={row.seoUrl} className="text-brand hover:underline">SEO Edit</Link>}{row.aiUrl && <Link href={row.aiUrl} className="text-brand hover:underline">AI Edit</Link>}</div></td></tr>)}</tbody></table></div>
     {!visible.length && <p className="p-8 text-center text-sm text-muted-foreground">No pages match these filters. Clear the filters or try a different search.</p>}
     <div className="mt-4 flex flex-wrap items-center justify-between gap-3"><p className="text-sm text-muted-foreground">Showing {filtered.length ? (page - 1) * PAGE_SIZE + 1 : 0}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length.toLocaleString()}</p><div className="flex items-center gap-2"><button type="button" disabled={page <= 1} onClick={() => setPage((value) => Math.max(1, value - 1))} className="rounded-md border border-border px-3 py-2 text-sm font-bold disabled:opacity-40">Previous</button><span className="text-sm text-muted-foreground">Page {page} of {totalPages}</span><button type="button" disabled={page >= totalPages} onClick={() => setPage((value) => Math.min(totalPages, value + 1))} className="rounded-md border border-border px-3 py-2 text-sm font-bold disabled:opacity-40">Next</button></div></div>
   </section>
