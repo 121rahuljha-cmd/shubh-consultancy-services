@@ -18,8 +18,11 @@ export function ServiceBuilder() {
   const [records, setRecords] = useState<ServiceBuilderRecord[]>([]); const [selectedId, setSelectedId] = useState('builder-fssai-food-licence'); const [requestedSlug, setRequestedSlug] = useState<string | null>(null); const [notFound, setNotFound] = useState(false); const [tab, setTab] = useState<typeof tabs[number]>('Basic'); const [notice, setNotice] = useState(''); const [research, setResearch] = useState<SeoResearchRecord | undefined>(); const [databaseBacked, setDatabaseBacked] = useState(false)
   useEffect(() => {
     const loaded = getBuilderRecords()
-    const requested = new URLSearchParams(window.location.search).get('service')
-    const validRequested = requested ? services.some((service) => service.slug === requested) : true
+    const params = new URLSearchParams(window.location.search)
+    const requested = params.get('service')
+    const requestedTab = params.get('tab')
+    if (requestedTab && tabs.includes(requestedTab as typeof tabs[number])) setTab(requestedTab as typeof tabs[number])
+    const validRequested = requested ? services.some((service) => service.slug === requested) || loaded.some((record) => record.serviceSlug === requested) : true
     setRequestedSlug(requested)
     if (!validRequested) { setNotFound(true); return }
     const localMatch = requested ? loaded.find((item) => item.serviceSlug === requested) : loaded[0]
