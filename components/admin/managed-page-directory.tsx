@@ -103,6 +103,7 @@ export function ManagedPageDirectory({ publicPages = [] }: { publicPages?: Publi
         updatedAt: '', menu: 'yes', author: '—', comments: null, pageviews: null, seoScore: null, schema: 'service', internalLinks: null, outboundLinks: null, backlinks: null, editUrl: `/admin/service-builder/edit?service=${encodeURIComponent(item.slug)}`,
       }))
       let databaseRows: PageRow[] = []
+      let blogRows: PageRow[] = []
       let message = 'Database records could not be loaded; local and catalog pages are still shown.'
       try {
         const response = await fetch('/api/pages?limit=10000', { credentials: 'same-origin', cache: 'no-store' })
@@ -116,9 +117,21 @@ export function ManagedPageDirectory({ publicPages = [] }: { publicPages?: Publi
       } catch {
         message = 'Database is unavailable; local and catalog pages are still shown.'
       }
+      try {
+        const response = await fetch('/api/blogs', { credentials: 'same-origin', cache: 'no-store' })
+        const payload = await response.json() as { blogs?: ApiPage[] }
+        if (response.ok && Array.isArray(payload.blogs)) {
+          blogRows = payload.blogs.map((blog) => {
+            const slug = String(blog.slug || '')
+            const title = String(blog.title || 'Untitled blog')
+            const statusValue = normalizeStatus(blog.status)
+            return { id: `blog-${String(blog.id || slug)}`, title, slug, url: `/blog/${slug}`, type: 'article', status: statusValue, source: 'Blog CMS', keyword: String(blog.primaryKeyword || blog.keyword || ''), updatedAt: String(blog.updatedAt || ''), menu: 'unknown', author: String(blog.author || '—'), comments: null, pageviews: null, seoScore: typeof blog.seoScore === 'number' ? blog.seoScore : null, schema: 'article', internalLinks: null, outboundLinks: null, backlinks: null, editUrl: `/admin/blogs?edit=${encodeURIComponent(slug)}`, seoUrl: `/admin/blogs?edit=${encodeURIComponent(slug)}&tab=SEO`, aiUrl: `/admin/blogs?edit=${encodeURIComponent(slug)}&tab=AI`, duplicateKind: undefined, duplicateId: undefined }
+          })
+        }
+      } catch { /* Blog records are optional if the blog API is unavailable. */ }
       if (cancelled) return
-      // Prefer the database copy when a page exists in both sources.
-      const merged = [...databaseRows, ...localBuilder, ...localCms, ...publicRouteRows, ...catalog]
+      // Prefer database records, then drafts from the blog API, before local and route catalogs.
+      const merged = [...databaseRows, ...blogRows, ...localBuilder, ...localCms, ...publicRouteRows, ...catalog]
       const seen = new Set<string>()
       const unique = merged.filter((row) => {
         const key = row.url.toLowerCase()
