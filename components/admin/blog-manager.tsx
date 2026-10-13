@@ -14,7 +14,7 @@ type BlogRecord = {
 }
 
 const inputClass = 'w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground'
-const blank = { id: '', title: '', slug: '', content: '', status: 'draft' as const }
+const blank = { id: '', title: '', slug: '', content: '', status: 'draft' as const, primaryKeyword: '', seoTitle: '', metaDescription: '', canonicalUrl: '', h1: '' }
 
 export function BlogManager() {
   const [blogs, setBlogs] = useState<BlogRecord[]>([])
@@ -23,6 +23,7 @@ export function BlogManager() {
   const [saving, setSaving] = useState(false)
   const [notice, setNotice] = useState('')
   const [error, setError] = useState('')
+  const [editorTab, setEditorTab] = useState<'Basic' | 'SEO' | 'Content' | 'AI'>('Basic')
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -41,14 +42,24 @@ export function BlogManager() {
 
   useEffect(() => { void load() }, [load])
 
+  useEffect(() => {
+    if (!blogs.length) return
+    const params = new URLSearchParams(window.location.search)
+    const slug = params.get('edit')
+    const requestedTab = params.get('tab')
+    if (requestedTab === 'SEO' || requestedTab === 'AI' || requestedTab === 'Content') setEditorTab(requestedTab)
+    if (!slug) return
+    const blog = blogs.find((item) => item.slug === slug)
+    if (!blog) return
+    const metadata = blog.content && typeof blog.content === 'object' ? blog.content as Record<string, unknown> : {}
+    const body = typeof metadata.content === 'string' ? metadata.content : typeof blog.content === 'string' ? blog.content : JSON.stringify(metadata.content ?? blog.content ?? '', null, 2)
+    setForm({ id: blog.id, title: blog.title, slug: blog.slug, content: body, status: blog.status === 'published' || blog.status === 'unpublished' ? blog.status : 'draft', primaryKeyword: String(metadata.primaryKeyword || ''), seoTitle: String(metadata.seoTitle || ''), metaDescription: String(metadata.metaDescription || ''), canonicalUrl: String(metadata.canonicalUrl || ''), h1: String(metadata.h1 || '') })
+  }, [blogs])
+
   const startEdit = (blog: BlogRecord) => {
-    setForm({
-      id: blog.id,
-      title: blog.title,
-      slug: blog.slug,
-      content: typeof blog.content === 'string' ? blog.content : JSON.stringify(blog.content ?? {}, null, 2),
-      status: blog.status === 'published' || blog.status === 'unpublished' ? blog.status : 'draft',
-    })
+    const metadata = blog.content && typeof blog.content === 'object' ? blog.content as Record<string, unknown> : {}
+    setForm({ id: blog.id, title: blog.title, slug: blog.slug, content: typeof metadata.content === 'string' ? metadata.content : typeof blog.content === 'string' ? blog.content : JSON.stringify(metadata.content ?? blog.content ?? {}, null, 2), status: blog.status === 'published' || blog.status === 'unpublished' ? blog.status : 'draft', primaryKeyword: String(metadata.primaryKeyword || ''), seoTitle: String(metadata.seoTitle || ''), metaDescription: String(metadata.metaDescription || ''), canonicalUrl: String(metadata.canonicalUrl || ''), h1: String(metadata.h1 || '') })
+    setEditorTab('Basic')
     setNotice('')
   }
 
@@ -57,8 +68,9 @@ export function BlogManager() {
     setSaving(true)
     setNotice('')
     setError('')
-    let content: unknown = form.content
-    try { content = JSON.parse(form.content) } catch { /* plain-text blog content is supported */ }
+    let body: unknown = form.content
+    try { body = JSON.parse(form.content) } catch { /* plain-text blog content is supported */ }
+    const content: unknown = { content: body, primaryKeyword: form.primaryKeyword, seoTitle: form.seoTitle, metaDescription: form.metaDescription, canonicalUrl: form.canonicalUrl, h1: form.h1 }
     try {
       const response = await fetch('/api/blogs', {
         method: 'POST',
@@ -124,14 +136,15 @@ export function BlogManager() {
         <section className="rounded-xl border border-border bg-background p-5">
           <h2 className="font-serif text-xl font-bold text-navy">{form.id ? 'Edit blog' : 'Create blog draft'}</h2>
           <form onSubmit={save} className="mt-4 flex flex-col gap-4">
-            <label className="text-sm font-semibold text-navy">Title *<input className={`${inputClass} mt-1`} required value={form.title} onChange={(event) => updateTitle(event.target.value)} /></label>
-            <label className="text-sm font-semibold text-navy">Slug *<input className={`${inputClass} mt-1`} required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" value={form.slug} onChange={(event) => setForm((current) => ({ ...current, slug: event.target.value }))} /><span className="mt-1 block text-xs font-normal text-muted-foreground">URL: /blog/{form.slug || 'your-blog-slug'}</span></label>
-            <label className="text-sm font-semibold text-navy">Content *<textarea className={`${inputClass} mt-1 min-h-48 resize-y`} required value={form.content} onChange={(event) => setForm((current) => ({ ...current, content: event.target.value }))} placeholder="Write the article content, or paste a JSON content object." /></label>
-            <label className="text-sm font-semibold text-navy">Status<select className={`${inputClass} mt-1`} value={form.status} onChange={(event) => setForm((current) => ({ ...current, status: event.target.value as typeof blank.status | 'published' | 'unpublished' }))}><option value="draft">Draft</option><option value="published">Published</option><option value="unpublished">Unpublished</option></select></label>
+            <div className="flex gap-1 overflow-x-auto border-b border-border">{(['Basic', 'SEO', 'Content', 'AI'] as const).map((tab) => <button type="button" key={tab} onClick={() => setEditorTab(tab)} className={`shrink-0 border-b-2 px-3 py-2 text-sm font-bold ${editorTab === tab ? 'border-brand text-brand' : 'border-transparent text-muted-foreground'}`}>{tab}</button>)}</div>
+            {editorTab === 'Basic' && <><label className="text-sm font-semibold text-navy">Title *<input className={`${inputClass} mt-1`} required value={form.title} onChange={(event) => updateTitle(event.target.value)} /></label><label className="text-sm font-semibold text-navy">Slug *<input className={`${inputClass} mt-1`} required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" value={form.slug} onChange={(event) => setForm((current) => ({ ...current, slug: event.target.value }))} /><span className="mt-1 block text-xs font-normal text-muted-foreground">URL: /blog/{form.slug || 'your-blog-slug'}</span></label><label className="text-sm font-semibold text-navy">H1<input className={`${inputClass} mt-1`} value={form.h1} onChange={(event) => setForm((current) => ({ ...current, h1: event.target.value }))} /></label><label className="text-sm font-semibold text-navy">Status<select className={`${inputClass} mt-1`} value={form.status} onChange={(event) => setForm((current) => ({ ...current, status: event.target.value as typeof blank.status | 'published' | 'unpublished' }))}><option value="draft">Draft</option><option value="published">Published</option><option value="unpublished">Unpublished</option></select></label></>}
+            {editorTab === 'SEO' && <><label className="text-sm font-semibold text-navy">Primary keyword<input className={`${inputClass} mt-1`} value={form.primaryKeyword} onChange={(event) => setForm((current) => ({ ...current, primaryKeyword: event.target.value }))} /></label><label className="text-sm font-semibold text-navy">SEO title<input className={`${inputClass} mt-1`} value={form.seoTitle} onChange={(event) => setForm((current) => ({ ...current, seoTitle: event.target.value }))} /></label><label className="text-sm font-semibold text-navy">Meta description<textarea className={`${inputClass} mt-1 min-h-24`} value={form.metaDescription} onChange={(event) => setForm((current) => ({ ...current, metaDescription: event.target.value }))} /></label><label className="text-sm font-semibold text-navy">Canonical URL<input className={`${inputClass} mt-1`} value={form.canonicalUrl} onChange={(event) => setForm((current) => ({ ...current, canonicalUrl: event.target.value }))} /></label></>}
+            {editorTab === 'Content' && <label className="text-sm font-semibold text-navy">Content *<textarea className={`${inputClass} mt-1 min-h-48 resize-y`} required value={form.content} onChange={(event) => setForm((current) => ({ ...current, content: event.target.value }))} placeholder="Write the article content, or paste a JSON content object." /></label>}
+            {editorTab === 'AI' && <div className="rounded-lg border border-border bg-surface p-4 text-sm text-muted-foreground"><strong className="text-navy">AI draft review</strong><p className="mt-2">Review AI-generated content before saving or publishing. Paste the reviewed draft in the Content tab; this workspace never auto-publishes AI content.</p></div>}
             {error && <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">{error}</p>}
             {notice && <p role="status" className="rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800">{notice}</p>}
-            <div className="flex flex-wrap gap-2"><button disabled={saving} className="rounded-md bg-brand px-4 py-2.5 text-sm font-bold text-white disabled:opacity-50">{saving ? 'Saving…' : 'Save blog'}</button><button type="button" onClick={() => { setForm(blank); setNotice(''); setError('') }} className="rounded-md border border-border px-4 py-2.5 text-sm font-bold text-navy">Clear</button></div>
-          </form>
+            <div className="flex flex-wrap gap-2"><button disabled={saving} className="rounded-md bg-brand px-4 py-2.5 text-sm font-bold text-white disabled:opacity-50">{saving ? 'Saving…' : 'Save blog'}</button><button type="button" onClick={() => { setForm(blank); setEditorTab('Basic'); setNotice(''); setError('') }} className="rounded-md border border-border px-4 py-2.5 text-sm font-bold text-navy">Clear</button></div>
+          </form>   </form>
         </section>
       </div>
       <p className="mt-5 text-xs text-muted-foreground">Note: this editor saves through the existing authenticated Blog API. If the production database is not configured, the page will show the API error instead of pretending the save succeeded.</p>
