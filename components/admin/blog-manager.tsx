@@ -77,6 +77,27 @@ export function BlogManager() {
     }
   }
 
+  const archiveBlog = async (blog: BlogRecord) => {
+    if (!window.confirm(`Move “${blog.title}” out of published blog listings? The record will be retained as unpublished.`)) return
+    setSaving(true); setError(''); setNotice('')
+    try {
+      const response = await fetch('/api/blogs', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: blog.id, title: blog.title, slug: blog.slug, content: blog.content, status: 'unpublished' }) })
+      const data = await response.json() as { error?: string }
+      if (!response.ok) throw new Error(data.error || 'Blog could not be unpublished.')
+      setNotice('Blog moved to unpublished. Its content has been retained.')
+      await load()
+    } catch (reason) { setError(reason instanceof Error ? reason.message : 'Blog could not be unpublished.') }
+    finally { setSaving(false) }
+  }
+
+  const duplicateBlog = (blog: BlogRecord) => {
+    let content = blog.content
+    if (typeof content !== 'string') content = JSON.stringify(content ?? {}, null, 2)
+    setForm({ id: '', title: `${blog.title} copy`, slug: `${blog.slug}-copy`, content: String(content), status: 'draft' })
+    setNotice('Duplicate prepared as a draft. Save it to create a separate blog record.')
+    setError('')
+  }
+
   const updateTitle = (title: string) => setForm((current) => ({
     ...current,
     title,
@@ -97,7 +118,7 @@ export function BlogManager() {
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
         <section className="rounded-xl border border-border bg-background p-5">
           <div className="flex items-center justify-between gap-3"><h2 className="font-serif text-xl font-bold text-navy">Blog posts</h2><span className="text-xs text-muted-foreground">{blogs.length} record(s)</span></div>
-          {loading ? <p className="py-8 text-sm text-muted-foreground">Loading blogs…</p> : blogs.length === 0 ? <p className="py-8 text-sm text-muted-foreground">No blog records found. Create a draft using the form.</p> : <div className="mt-4 flex flex-col divide-y divide-border">{blogs.map((blog) => <article key={blog.id} className="py-4 first:pt-0"><div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><h3 className="font-semibold text-navy">{blog.title}</h3><p className="mt-1 break-all font-mono text-xs text-muted-foreground">/blog/{blog.slug}</p><span className="mt-2 inline-block rounded-full bg-surface px-2 py-1 text-xs font-bold uppercase text-muted-foreground">{blog.status || 'draft'}</span></div><button type="button" onClick={() => startEdit(blog)} className="rounded-md border border-border px-3 py-2 text-xs font-bold text-brand">Edit</button></div><Link href={`/blog/${blog.slug}`} target="_blank" className="mt-2 inline-block text-xs font-semibold text-brand hover:underline">Open article ↗</Link></article>)}</div>}
+          {loading ? <p className="py-8 text-sm text-muted-foreground">Loading blogs…</p> : blogs.length === 0 ? <p className="py-8 text-sm text-muted-foreground">No blog records found. Create a draft using the form.</p> : <div className="mt-4 flex flex-col divide-y divide-border">{blogs.map((blog) => <article key={blog.id} className="py-4 first:pt-0"><div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><h3 className="font-semibold text-navy">{blog.title}</h3><p className="mt-1 break-all font-mono text-xs text-muted-foreground">/blog/{blog.slug}</p><span className="mt-2 inline-block rounded-full bg-surface px-2 py-1 text-xs font-bold uppercase text-muted-foreground">{blog.status || 'draft'}</span></div><div className="flex flex-wrap gap-2"><button type="button" onClick={() => startEdit(blog)} className="rounded-md border border-border px-3 py-2 text-xs font-bold text-brand">Edit</button><button type="button" onClick={() => duplicateBlog(blog)} className="rounded-md border border-border px-3 py-2 text-xs font-bold text-navy">Duplicate</button><button type="button" disabled={saving || blog.status === "unpublished"} onClick={() => void archiveBlog(blog)} className="rounded-md border border-red-200 px-3 py-2 text-xs font-bold text-red-600 disabled:opacity-50">Delete / Unpublish</button></div></div><Link href={`/blog/${blog.slug}`} target="_blank" className="mt-2 inline-block text-xs font-semibold text-brand hover:underline">Open article ↗</Link></article>)}</div>}
         </section>
 
         <section className="rounded-xl border border-border bg-background p-5">
