@@ -144,7 +144,7 @@ export function BlogManager() {
             {error && <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">{error}</p>}
             {notice && <p role="status" className="rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800">{notice}</p>}
             <div className="flex flex-wrap gap-2"><button disabled={saving} className="rounded-md bg-brand px-4 py-2.5 text-sm font-bold text-white disabled:opacity-50">{saving ? 'Saving…' : 'Save blog'}</button><button type="button" onClick={() => { setForm(blank); setEditorTab('Basic'); setNotice(''); setError('') }} className="rounded-md border border-border px-4 py-2.5 text-sm font-bold text-navy">Clear</button></div>
-          </form>   </form>
+          </form>
         </section>
       </div>
       <p className="mt-5 text-xs text-muted-foreground">Note: this editor saves through the existing authenticated Blog API. If the production database is not configured, the page will show the API error instead of pretending the save succeeded.</p>
