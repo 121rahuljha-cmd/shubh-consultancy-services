@@ -21,7 +21,7 @@ export default async function RegistrationPage({ params }: Props) {
   if (!page) notFound()
   const related = registrationPages.filter((item) => item.slug !== page.slug).slice(0, 10)
   const popularSlugs = ['fssai-registration', 'fssai-license', 'trade-license', 'import-export-code', 'udyam-registration', 'shop-act-registration', 'iso-registration', 'digital-signature', 'gst-registration', 'startup-india-registration']
-  const popular = popularSlugs.map((slug) => registrationPages.find((item) => item.slug === slug)).filter((item): item is (typeof registrationPages)[number] => Boolean(item) && item.slug !== page.slug).slice(0, 10)
+  const popular = [...popularSlugs.map((slug) => registrationPages.find((item) => item.slug === slug)), ...registrationPages.filter((item) => !popularSlugs.includes(item.slug))].filter((item): item is (typeof registrationPages)[number] => Boolean(item) && item.slug !== page.slug).slice(0, 10)
   return <main className="min-h-screen bg-background">
     <section className="bg-primary text-primary-foreground"><div className="mx-auto max-w-6xl px-4 py-12 md:px-6 md:py-16">
       <nav aria-label="Breadcrumb" className="mb-6 text-sm text-primary-foreground/70"><Link href="/" className="hover:text-primary-foreground">Home</Link><span className="mx-2">/</span><Link href="/services" className="hover:text-primary-foreground">Services</Link><span className="mx-2">/</span><span>Registrations</span><span className="mx-2">/</span><span className="text-primary-foreground">{page.title}</span></nav>
