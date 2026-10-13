@@ -31,7 +31,7 @@ const normalizeStatus = (value: unknown): Status => {
   return 'draft'
 }
 const cmsRow = (page: CmsPage): PageRow => ({
-  id: `cms-${page.id}`, title: page.title || 'Untitled CMS page', slug: page.slug || '', url: page.pageType === 'article' ? `/blog/${page.slug}` : `/pages/${page.slug}`,
+  id: `cms-${page.id}`, title: page.title || 'Untitled CMS page', slug: page.slug || '', url: page.pageType === 'article' ? `/blog/${page.slug}` : page.pageType === 'service' ? `/services/${page.slug}` : `/pages/${page.slug}`,
   type: page.pageType || 'page', status: normalizeStatus(page.status), source: 'Page CMS (this browser)', keyword: page.primaryKeyword || '', updatedAt: page.updatedAt || '', menu: 'no', editUrl: `/admin/pages?selected=${encodeURIComponent(page.id)}`,
 })
 const builderRow = (record: ServiceBuilderRecord): PageRow => ({
