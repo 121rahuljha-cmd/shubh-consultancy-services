@@ -1,7 +1,5 @@
 import type { Metadata } from 'next'
 import { PageCms } from '@/components/admin/page-cms'
-import { PageAiEditorStandalone } from '@/components/admin/page-ai-editor'
-import { PublicPageInventory } from '@/components/admin/page-cms'
 import { ManagedPageDirectory } from '@/components/admin/managed-page-directory'
 import { discoverPublicPages } from '@/lib/public-page-registry'
 
@@ -9,5 +7,6 @@ export const metadata: Metadata = { title: 'Pages', robots: { index: false, foll
 export const dynamic = 'force-dynamic'
 
 export default async function PagesPage() {
-  return <><ManagedPageDirectory /><PublicPageInventory pages={await discoverPublicPages()} /><PageAiEditorStandalone /><PageCms /></>
+  const publicPages = await discoverPublicPages()
+  return <><ManagedPageDirectory publicPages={publicPages} /><PageCms hideDirectory /></>
 }
