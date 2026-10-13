@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 
 type BlogRecord = {
@@ -14,7 +14,7 @@ type BlogRecord = {
 }
 
 const inputClass = 'w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground'
-const blank = { id: '', title: '', slug: '', content: '', status: 'draft' as const }
+const blank = { id: '', title: '', slug: '', content: '', status: 'draft' as 'draft' | 'published' | 'unpublished' }
 
 export function BlogManager() {
   const [blogs, setBlogs] = useState<BlogRecord[]>([])
@@ -23,6 +23,7 @@ export function BlogManager() {
   const [saving, setSaving] = useState(false)
   const [notice, setNotice] = useState('')
   const [error, setError] = useState('')
+  const startEditRef = useRef<((blog: BlogRecord) => void) | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -32,6 +33,9 @@ export function BlogManager() {
       const data = await response.json() as { blogs?: BlogRecord[]; error?: string }
       if (!response.ok) throw new Error(data.error || 'Blogs could not be loaded.')
       setBlogs(data.blogs || [])
+      const requestedSlug = new URLSearchParams(window.location.search).get('slug')
+      const requestedBlog = requestedSlug ? data.blogs?.find((blog) => blog.slug === requestedSlug) : undefined
+      if (requestedBlog) startEditRef.current?.(requestedBlog)
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : 'Blogs could not be loaded.')
     } finally {
@@ -51,6 +55,7 @@ export function BlogManager() {
     })
     setNotice('')
   }
+  startEditRef.current = startEdit
 
   const save = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()

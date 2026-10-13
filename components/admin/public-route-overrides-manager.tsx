@@ -26,7 +26,10 @@ export function PublicRouteOverridesManager() {
         const result = await response.json()
         if (!response.ok) throw new Error(result.error || 'Route overrides are unavailable.')
         setOverrides(result.overrides || [])
-        const current = result.overrides?.find((item: Override) => item.routeKey === selected)
+        const requested = new URLSearchParams(window.location.search).get('route') as RouteKey | null
+        const initialKey = requested && requested in routeLabels ? requested : selected
+        setSelected(initialKey)
+        const current = result.overrides?.find((item: Override) => item.routeKey === initialKey)
         if (current) { setContent(JSON.stringify(current.content, null, 2)); setStatus(current.status) }
       })
       .catch((error) => setNotice(error instanceof Error ? error.message : 'Could not load route overrides.'))
