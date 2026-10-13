@@ -19,7 +19,9 @@ export default async function RegistrationPage({ params }: Props) {
   const { slug } = await params
   const page = registrationPages.find((item) => item.slug === slug)
   if (!page) notFound()
-  const related = registrationPages.filter((item) => item.slug !== page.slug).slice(0, 6)
+  const related = registrationPages.filter((item) => item.slug !== page.slug).slice(0, 10)
+  const popularSlugs = ['fssai-registration', 'fssai-license', 'trade-license', 'import-export-code', 'udyam-registration', 'shop-act-registration', 'iso-registration', 'digital-signature', 'gst-registration', 'startup-india-registration']
+  const popular = popularSlugs.map((slug) => registrationPages.find((item) => item.slug === slug)).filter((item): item is (typeof registrationPages)[number] => Boolean(item) && item.slug !== page.slug).slice(0, 10)
   return <main className="min-h-screen bg-background">
     <section className="bg-primary text-primary-foreground"><div className="mx-auto max-w-6xl px-4 py-12 md:px-6 md:py-16">
       <nav aria-label="Breadcrumb" className="mb-6 text-sm text-primary-foreground/70"><Link href="/" className="hover:text-primary-foreground">Home</Link><span className="mx-2">/</span><Link href="/services" className="hover:text-primary-foreground">Services</Link><span className="mx-2">/</span><span>Registrations</span><span className="mx-2">/</span><span className="text-primary-foreground">{page.title}</span></nav>
@@ -36,7 +38,19 @@ export default async function RegistrationPage({ params }: Props) {
         <section className="rounded-xl bg-brand-tint p-6"><h2 className="font-serif text-2xl font-bold text-navy">Need help with {page.title.toLowerCase()}?</h2><p className="mt-3 leading-7 text-muted-foreground">Tell us your business type, state and intended activity. We can help you identify the relevant checklist and next steps before you proceed.</p><div className="mt-5 flex flex-wrap gap-3"><a href={contact.phonePrimaryHref} className="rounded-md bg-brand px-4 py-3 text-sm font-bold text-white">Call Shubh Consultancy</a><a href={contact.whatsappHref} target="_blank" rel="noreferrer" className="rounded-md border border-brand px-4 py-3 text-sm font-bold text-brand">WhatsApp enquiry</a></div></section>
         <p className="mt-6 text-xs leading-5 text-muted-foreground">Information on this page is general guidance, not a guarantee of approval or processing time. Official eligibility, fees, documents and timelines should be verified with the relevant authority before filing.</p>
       </article>
-      <aside className="h-fit rounded-xl border border-border bg-card p-5 lg:sticky lg:top-28"><h2 className="font-serif text-lg font-bold text-navy">Explore registrations</h2><p className="mt-2 text-sm text-muted-foreground">Related business registration and compliance services.</p><ul className="mt-4 space-y-1">{related.map((item) => <li key={item.slug}><Link href={`/registrations/${item.slug}`} className="flex items-center justify-between gap-2 rounded-md px-2 py-2 text-sm text-navy hover:bg-brand-tint hover:text-brand"><span>{item.title}</span><ArrowRight className="size-3.5 shrink-0" /></Link></li>)}</ul><Link href="/services" className="mt-4 block border-t border-border pt-4 text-sm font-bold text-brand hover:underline">View all services</Link></aside>
+      <aside className="h-fit space-y-6 lg:sticky lg:top-28">
+        <section className="rounded-xl border border-border bg-card p-5">
+          <h2 className="font-serif text-lg font-bold text-navy">Related services</h2>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">Explore connected registrations and compliance services that may apply to your business. Applicability depends on your activity and location.</p>
+          <div className="mt-4 grid gap-2">{related.map((item) => <Link key={item.slug} href={`/registrations/${item.slug}`} className="flex min-h-10 items-center justify-between gap-2 rounded-md border border-border px-3 py-2 text-sm font-medium text-navy transition hover:border-brand hover:bg-brand-tint hover:text-brand"><span>{item.title}</span><ArrowRight className="size-3.5 shrink-0" /></Link>)}</div>
+        </section>
+        <section className="rounded-xl border border-border bg-card p-5">
+          <h2 className="font-serif text-lg font-bold text-navy">Popular services</h2>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">Frequently explored services for startups, food businesses, shops, exporters and growing organisations.</p>
+          <div className="mt-4 grid gap-2">{popular.map((item) => <Link key={item.slug} href={`/registrations/${item.slug}`} className="flex min-h-10 items-center justify-between gap-2 rounded-md bg-muted/50 px-3 py-2 text-sm font-medium text-navy transition hover:bg-brand-tint hover:text-brand"><span>{item.title}</span><ArrowRight className="size-3.5 shrink-0" /></Link>)}</div>
+          <Link href="/services" className="mt-4 block border-t border-border pt-4 text-sm font-bold text-brand hover:underline">View all services</Link>
+        </section>
+      </aside>
     </div>
   </main>
 }
